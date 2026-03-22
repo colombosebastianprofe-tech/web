@@ -87,6 +87,32 @@
         <p>Tu propio espacio, sin límites de diseño.</p>
         <a href="#" class="cta-button">Ver más</a>
     </div>
+<script>
+    function ajustarAmbiente() {
+        const hora = new Date().getHours();
+        const body = document.body;
+        const titulo = document.querySelector('h1');
+        const subtitulo = document.querySelector('p');
 
+        if (hora >= 19 || hora < 6) {
+            // MODO NOCHE: Degradado espacial oscuro
+            body.style.background = "linear-gradient(-45deg, #0f0c29, #302b63, #24243e)";
+            body.style.backgroundSize = "400% 400%";
+            titulo.style.color = "#ffffff";
+            subtitulo.style.color = "#bdc3c7";
+            titulo.innerText = "Buenas noches.";
+        } else {
+            // MODO DÍA: Tu degradado celeste y blanco
+            body.style.background = "linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff)";
+            body.style.backgroundSize = "400% 400%";
+            titulo.style.color = "#2d3436";
+            subtitulo.style.color = "#636e72";
+            titulo.innerText = "Buen día.";
+        }
+    }
+
+    // Ejecutar al cargar la página
+    window.onload = ajustarAmbiente;
+</script>
 </body>
 </html>
