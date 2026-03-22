@@ -3,116 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio Web | Inicio</title>
+    <title>Clima en Vivo | Mi Sitio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --text-color: #ffffff;
-            --button-bg: #ffffff;
-            --button-text: #333;
-        }
-
+        :root { --bg: #74b9ff; --txt: #2d3436; }
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* Degradado animado con tonos celestes y blancos */
-            background: linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff);
-            background-size: 400% 400%;
-            animation: gradient 10s ease infinite;
-            overflow: hidden;
+            margin: 0; font-family: 'Inter', sans-serif; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            transition: background 2s ease; /* Transición suave de color */
+            background: var(--bg); color: var(--txt); text-align: center;
         }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .content {
-            text-align: center;
-            animation: fadeIn 1.5s ease-out;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 600;
-            letter-spacing: -2px;
-            margin-bottom: 0.5rem;
-            color: #2d3436; /* Un gris oscuro para que resalte sobre el blanco/celeste */
-        }
-
-        p {
-            font-size: 1.2rem;
-            font-weight: 300;
-            color: #636e72;
-            margin-bottom: 2rem;
-        }
-
-        .cta-button {
-            text-decoration: none;
-            background-color: #2d3436; /* Botón oscuro para contraste fuerte */
-            color: white;
-            padding: 15px 35px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            background-color: #000;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .content { animation: fadeIn 1.5s ease; padding: 20px; }
+        h1 { font-size: 3.5rem; letter-spacing: -2px; margin-bottom: 0.5rem; }
+        p { font-size: 1.2rem; opacity: 0.8; }
+        .temp { font-size: 4rem; font-weight: 600; margin: 10px 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div class="content">
-        <h1>Lienzo Libre.</h1>
-        <p>Tu propio espacio, sin límites de diseño.</p>
-        <a href="#" class="cta-button">Ver más</a>
+        <h1 id="estado">Cargando clima...</h1>
+        <div class="temp" id="temperatura">--°C</div>
+        <p id="ciudad">Detectando ubicación...</p>
+        <br>
+        <a href="#" class="cta-button" style="text-decoration:none; background:#2d3436; color:white; padding:10px 25px; border-radius:50px;">Saber más</a>
     </div>
-<script>
-    function ajustarAmbiente() {
-        const hora = new Date().getHours();
-        const body = document.body;
-        const titulo = document.querySelector('h1');
-        const subtitulo = document.querySelector('p');
 
-        if (hora >= 19 || hora < 6) {
-            // MODO NOCHE: Degradado espacial oscuro
-            body.style.background = "linear-gradient(-45deg, #0f0c29, #302b63, #24243e)";
-            body.style.backgroundSize = "400% 400%";
-            titulo.style.color = "#ffffff";
-            subtitulo.style.color = "#bdc3c7";
-            titulo.innerText = "Buenas noches.";
-        } else {
-            // MODO DÍA: Tu degradado celeste y blanco
-            body.style.background = "linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff)";
-            body.style.backgroundSize = "400% 400%";
-            titulo.style.color = "#2d3436";
-            subtitulo.style.color = "#636e72";
-            titulo.innerText = "Buen día.";
+    <script>
+        // === CONFIGURACIÓN ===
+        const API_KEY = "efbec86ba543f014d935580e272401ff";
+        
+        function obtenerClima(lat, lon) {
+            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`)
+                .then(response => response.json())
+                .then(data => {
+                    const temp = Math.round(data.main.temp);
+                    const estado = data.weather[0].main.toLowerCase();
+                    const ciudad = data.name;
+
+                    document.getElementById('temperatura').innerText = `${temp}°C`;
+                    document.getElementById('ciudad').innerText = `En ${ciudad}`;
+
+                    // Lógica de diseño según el clima
+                    if (estado.includes("rain") || estado.includes("drizzle")) {
+                        document.body.style.background = "linear-gradient(to bottom, #4b6cb7, #182848)";
+                        document.body.style.color = "white";
+                        document.getElementById('estado').innerText = "Está lloviendo 🌧️";
+                    } else if (estado.includes("cloud")) {
+                        document.body.style.background = "linear-gradient(to bottom, #bdc3c7, #2c3e50)";
+                        document.body.style.color = "white";
+                        document.getElementById('estado').innerText = "Día nublado ☁️";
+                    } else {
+                        document.body.style.background = "linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec)";
+                        document.body.style.backgroundSize = "400% 400%";
+                        document.getElementById('estado').innerText = "Cielo despejado ☀️";
+                    }
+                });
         }
-    }
 
-    // Ejecutar al cargar la página
-    window.onload = ajustarAmbiente;
-</script>
+        // Pedir permiso de ubicación
+        navigator.geolocation.getCurrentPosition(
+            (pos) => obtenerClima(pos.coords.latitude, pos.coords.longitude),
+            () => { 
+                document.getElementById('estado').innerText = "Ubicación denegada";
+                document.getElementById('ciudad').innerText = "No puedo ver el clima sin permiso.";
+            }
+        );
+    </script>
 </body>
 </html>
