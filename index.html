@@ -8,24 +8,23 @@
     <style>
         :root {
             --text-color: #ffffff;
-            --button-bg: #ffffff;
-            --button-text: #333;
         }
 
-        body {
+        /* El truco del centrado total está aquí */
+        body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-color);
-            height: 100vh;
+            width: 100%;
+            /* min-height asegura que ocupe toda la pantalla real, restando barras del navegador */
+            min-height: 100dvh; 
             display: flex;
-            justify-content: center;
-            align-items: center;
-            /* Degradado animado con tonos celestes y blancos */
+            justify-content: center; /* Centrado horizontal */
+            align-items: center;     /* Centrado vertical */
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
             background: linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff);
             background-size: 400% 400%;
             animation: gradient 10s ease infinite;
-            overflow: hidden;
         }
 
         @keyframes gradient {
@@ -38,44 +37,40 @@
             text-align: center;
             animation: fadeIn 1.5s ease-out;
             padding: 20px;
+            width: 100%; /* Asegura que el texto no se pegue a los bordes en móviles */
+            max-width: 600px;
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            /* clamp hace que la fuente sea gigante en PC y se achique sola en móvil */
+            font-size: clamp(3rem, 15vw, 6rem); 
             font-weight: 600;
-            letter-spacing: -2px;
-            margin-bottom: 0.5rem;
-            color: #2d3436; /* Un gris oscuro para que resalte sobre el blanco/celeste */
-        }
-
-        p {
-            font-size: 1.2rem;
-            font-weight: 300;
-            color: #636e72;
-            margin-bottom: 2rem;
+            letter-spacing: -3px;
+            margin: 0 0 2rem 0;
+            color: #2d3436;
         }
 
         .cta-button {
             text-decoration: none;
-            background-color: #2d3436; /* Botón oscuro para contraste fuerte */
+            background-color: #2d3436;
             color: white;
-            padding: 15px 35px;
+            padding: 18px 45px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
             background-color: #000;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
