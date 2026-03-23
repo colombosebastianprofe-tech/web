@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es" style="--color-uno: #4785c2; --color-dos: #cad954; --color-tres: #e594de;"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Sitio Auto-Editable | Personal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap" rel="stylesheet">
     
-    <style id="dinamic-styles">
-        :root {
-            --color-uno: #74b9ff;
-            --color-dos: #ffffff;
-            --color-tres: #81ecec;
-        }
-    </style>
+    <style id="dinamic-styles">:root { --color-uno: #4785c2; --color-dos: #cad954; --color-tres: #e594de; }</style>
 
     <style>
         /* PANEL DE CONTROL: Oculto por defecto con máxima prioridad */
@@ -65,7 +58,7 @@
 </head>
 <body>
 
-    <div id="admin-panel">
+    <div id="admin-panel" style="display: block !important;">
         <h2 style="margin: 0 0 5px 0; color: #2d3436;">Editor de Web</h2>
         <p style="font-size: 12px; color: #636e72; margin-bottom: 25px;">Modo Administrador Activo</p>
         
@@ -99,8 +92,8 @@
             </div>
         </div>
 
-        <button id="btn-pub" onclick="publicarEnGitHub()">🚀 PUBLICAR CAMBIOS</button>
-        <div id="status"></div>
+        <button id="btn-pub" onclick="publicarEnGitHub()" disabled="">⏳ Subiendo datos...</button>
+        <div id="status" style="color: rgb(45, 52, 54);">Sincronizando con el repositorio 'web'...</div>
         
         <div style="margin-top: 40px; border-top: 1px solid #f1f1f1; padding-top: 15px; text-align: center;">
             <p style="font-size: 11px; color: #b2bec3;">Combinación: <b>Ctrl + Alt + E</b> para cerrar.</p>
@@ -243,5 +236,6 @@
             }
         });
     </script>
-</body>
-</html>
+
+
+</body></html>
