@@ -1,46 +1,44 @@
 <!DOCTYPE html>
-<html lang="es" style="--color-uno: #4785c2; --color-dos: #cad954; --color-tres: #e594de;"><head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio Auto-Editable | Personal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap" rel="stylesheet">
+    <title>Mi Sitio Auto-Editable | Control Total</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
     
-    <style id="dinamic-styles">:root { --color-uno: #4785c2; --color-dos: #cad954; --color-tres: #e594de; }</style>
+    <style id="dinamic-styles">
+        :root {
+            --color-uno: #74b9ff;
+            --color-dos: #ffffff;
+            --color-tres: #81ecec;
+        }
+    </style>
 
     <style>
-        /* PANEL DE CONTROL: Oculto por defecto con máxima prioridad */
         #admin-panel { 
             display: none !important; 
             position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 340px; 
-            height: 100dvh; 
+            top: 0; left: 0; width: 340px; height: 100dvh; 
             background: rgba(255, 255, 255, 0.98); 
-            z-index: 9999; 
-            padding: 25px; 
+            z-index: 9999; padding: 25px; 
             box-shadow: 10px 0 30px rgba(0,0,0,0.15); 
             font-family: 'Segoe UI', sans-serif; 
-            box-sizing: border-box; 
-            overflow-y: auto;
+            box-sizing: border-box; overflow-y: auto;
             border-right: 1px solid #eee;
         }
 
-        /* ESTILOS DEL FORMULARIO */
         .field-group { margin-bottom: 18px; }
         label { display: block; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
         input[type="color"] { width: 100%; height: 45px; border: 1px solid #ddd; border-radius: 10px; cursor: pointer; padding: 2px; background: white; }
         
-        button#btn-pub { background: #00b894; color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 15px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 148, 0.2); transition: all 0.2s; }
-        button#btn-pub:hover { background: #00a087; transform: translateY(-1px); }
-        button#btn-pub:active { transform: translateY(0); }
-        button#btn-pub:disabled { background: #dfe6e9; color: #b2bec3; cursor: not-allowed; box-shadow: none; }
+        button#btn-pub { background: #00b894; color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 15px; font-size: 15px; transition: all 0.2s; }
+        button#btn-pub:hover { background: #00a087; }
+        button#btn-pub:disabled { background: #dfe6e9; color: #b2bec3; cursor: not-allowed; }
         
         #status { font-size: 13px; margin-top: 15px; text-align: center; font-weight: 600; min-height: 20px; }
         hr { border: 0; border-top: 1px solid #f1f1f1; margin: 25px 0; }
 
-        /* ESTILOS DE LA WEB */
         body, html { margin: 0; padding: 0; width: 100%; min-height: 100dvh; display: flex; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; overflow: hidden;
             background: linear-gradient(-45deg, var(--color-uno), var(--color-dos), var(--color-tres), var(--color-uno));
             background-size: 400% 400%;
@@ -50,16 +48,15 @@
         
         .content { text-align: center; max-width: 600px; padding: 20px; animation: fadeIn 1.5s ease-out; }
         h1 { font-size: clamp(3rem, 15vw, 6rem); color: #2d3436; margin: 0 0 2rem 0; font-weight: 600; letter-spacing: -3px; }
-        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 20px 50px; border-radius: 60px; display: inline-block; font-weight: 600; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); background-color: #000; }
+        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 20px 50px; border-radius: 60px; display: inline-block; font-weight: 600; font-size: 1.1rem; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="admin-panel" style="display: block !important;">
-        <h2 style="margin: 0 0 5px 0; color: #2d3436;">Editor de Web</h2>
+    <div id="admin-panel">
+        <h2 style="margin: 0;">Editor de Web</h2>
         <p style="font-size: 12px; color: #636e72; margin-bottom: 25px;">Modo Administrador Activo</p>
         
         <div class="field-group">
@@ -79,24 +76,18 @@
 
         <hr>
 
-        <label>🎨 Paleta de Colores (Fondo)</label>
+        <label>🎨 Paleta de Colores</label>
         <div style="display: flex; gap: 8px;">
-            <div class="field-group" style="flex: 1;">
-                <input type="color" id="input-color-uno" oninput="actualizarVista()">
-            </div>
-            <div class="field-group" style="flex: 1;">
-                <input type="color" id="input-color-dos" oninput="actualizarVista()">
-            </div>
-            <div class="field-group" style="flex: 1;">
-                <input type="color" id="input-color-tres" oninput="actualizarVista()">
-            </div>
+            <div class="field-group" style="flex: 1;"><input type="color" id="input-color-uno" oninput="actualizarVista()"></div>
+            <div class="field-group" style="flex: 1;"><input type="color" id="input-color-dos" oninput="actualizarVista()"></div>
+            <div class="field-group" style="flex: 1;"><input type="color" id="input-color-tres" oninput="actualizarVista()"></div>
         </div>
 
-        <button id="btn-pub" onclick="publicarEnGitHub()" disabled="">⏳ Subiendo datos...</button>
-        <div id="status" style="color: rgb(45, 52, 54);">Sincronizando con el repositorio 'web'...</div>
+        <button id="btn-pub" onclick="publicarEnGitHub()">🚀 PUBLICAR CAMBIOS</button>
+        <div id="status"></div>
         
         <div style="margin-top: 40px; border-top: 1px solid #f1f1f1; padding-top: 15px; text-align: center;">
-            <p style="font-size: 11px; color: #b2bec3;">Combinación: <b>Ctrl + Alt + E</b> para cerrar.</p>
+            <p style="font-size: 11px; color: #b2bec3;">Combinación: <b>Ctrl + Alt + E</b></p>
         </div>
     </div>
 
@@ -106,7 +97,6 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN AUTOMÁTICA
         const CONFIG = {
             usuario: 'colombosebastianprofe-tech', 
             repo: 'web',      
@@ -135,26 +125,20 @@
             dinamicStylesTag: document.getElementById('dinamic-styles') 
         };
 
-        // 1. CARGA INICIAL
         window.onload = () => {
-            // Sincronizar inputs con lo que hay escrito en la web
             inputs.h1.value = views.h1.innerText;
             inputs.btnText.value = views.btn.innerText;
-            
-            // Recordar token si existe
             const savedToken = localStorage.getItem('gh_token_web');
             if(savedToken) inputs.token.value = savedToken;
 
-            // Leer colores actuales de las variables CSS
             const styles = getComputedStyle(document.documentElement);
             inputs.colorUno.value = rgbToHex(styles.getPropertyValue('--color-uno').trim()) || "#74b9ff";
             inputs.colorDos.value = rgbToHex(styles.getPropertyValue('--color-dos').trim()) || "#ffffff";
             inputs.colorTres.value = rgbToHex(styles.getPropertyValue('--color-tres').trim()) || "#81ecec";
         };
 
-        // Utilidad para convertir RGB a HEX (necesario para los inputs tipo color)
         function rgbToHex(rgb) {
-            if(!rgb.startsWith('rgb')) return rgb;
+            if(!rgb || !rgb.startsWith('rgb')) return rgb;
             const rgbValues = rgb.match(/\d+/g);
             return "#" + rgbValues.map(x => {
                 const hex = parseInt(x).toString(16);
@@ -162,7 +146,6 @@
             }).join("");
         }
 
-        // 2. ACTUALIZACIÓN VISUAL INMEDIATA
         function actualizarVista() {
             views.h1.innerText = inputs.h1.value || "Hola.";
             views.btn.innerText = inputs.btnText.value || "Ver más";
@@ -171,78 +154,64 @@
             views.rootStyles.setProperty('--color-tres', inputs.colorTres.value);
         }
 
-        // 3. PROCESO DE PUBLICACIÓN
         async function publicarEnGitHub() {
             const token = inputs.token.value.trim();
-            if(!token) return alert("Por favor, introduce tu Token de GitHub.");
+            if(!token) return alert("Introduce tu Token.");
 
             localStorage.setItem('gh_token_web', token);
-            ui.btnPub.disabled = true;
-            ui.btnPub.innerText = "⏳ Subiendo datos...";
-            ui.status.innerText = "Sincronizando con el repositorio 'web'...";
-            ui.status.style.color = "#2d3436";
 
+            // 1. Obtener SHA primero
             try {
-                // 1. Obtener SHA
                 const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
-                if(!res.ok) throw new Error("Acceso denegado. Revisa tu Token.");
                 const data = await res.json();
                 const sha = data.sha;
 
-                // 2. Preparar el CSS dinámico
-                const nuevoCss = `:root { --color-uno: ${inputs.colorUno.value}; --color-dos: ${inputs.colorDos.value}; --color-tres: ${inputs.colorTres.value}; }`;
-                ui.dinamicStylesTag.innerHTML = nuevoCss;
+                // 2. LIMPIAR UI ANTES DE LA FOTO
+                ui.btnPub.disabled = false; 
+                ui.btnPub.innerText = "🚀 PUBLICAR CAMBIOS";
+                ui.status.innerText = "";
+                ui.panel.style.setProperty('display', 'none', 'important');
 
-                // --- EL TRUCO: CERRAR EL PANEL ANTES DE CLONAR EL HTML ---
-                ui.panel.style.setProperty('display', 'none', 'important'); // <-- OCULTAR
-
-                // 3. Capturar el HTML (ahora que el panel está oculto)
+                // 3. Capturar HTML limpio
                 const finalHtml = "<" + "!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
-                // --- VOLVER A MOSTRAR EL PANEL PARA TI ---
-                ui.panel.style.setProperty('display', 'block', 'important'); // <-- VOLVER A MOSTRAR
+                // 4. Restaurar UI para el usuario mientras sube
+                ui.panel.style.setProperty('display', 'block', 'important');
+                ui.btnPub.disabled = true;
+                ui.btnPub.innerText = "⏳ Subiendo...";
 
-                // 4. Subir a GitHub
                 const update = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Actualización desde panel administrativo",
+                        message: "Web Update",
                         content: btoa(unescape(encodeURIComponent(finalHtml))),
                         sha: sha
                     })
                 });
 
                 if(update.ok) {
-                    ui.status.innerText = "✅ ¡Publicado con éxito! Espera 1 min.";
+                    ui.status.innerText = "✅ ¡Listo! Refresca en 1 min.";
                     ui.status.style.color = "#00b894";
-                } else { throw new Error("GitHub rechazó la actualización."); }
+                } else { throw new Error("Error API"); }
             } catch (e) {
                 ui.status.innerText = "❌ Error: " + e.message;
-                ui.status.style.color = "#d63031";
             } finally {
                 ui.btnPub.disabled = false;
                 ui.btnPub.innerText = "🚀 PUBLICAR CAMBIOS";
             }
         }
 
-        // --- ATAJO DE TECLADO: CTRL + ALT + E (EL CANDADO) ---
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'e') {
                 if (document.activeElement.tagName === 'INPUT') return;
                 e.preventDefault(); 
-                
                 const isHidden = ui.panel.style.getPropertyValue('display') !== 'block';
-                if (isHidden) {
-                    ui.panel.style.setProperty('display', 'block', 'important');
-                } else {
-                    ui.panel.style.setProperty('display', 'none', 'important');
-                }
+                ui.panel.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
             }
         });
     </script>
-
-
-</body></html>
+</body>
+</html>
