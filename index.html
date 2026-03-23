@@ -1,94 +1,109 @@
 <!DOCTYPE html>
-<html lang="es" style="--color-uno: #74b9ff; --color-dos: #ffffff; --color-tres: #cb6420;"><head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio Auto-Editable + Diseño</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap" rel="stylesheet">
+    <title>Mi Sitio Auto-Editable | Personal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    
     <style id="dinamic-styles">
         :root {
             --color-uno: #74b9ff;
             --color-dos: #ffffff;
-            --color-tres: #cb6420;
+            --color-tres: #81ecec;
         }
     </style>
-    <style>
-        /* ESTILOS FIJOS (No cambian) */
-        #admin-panel { position: fixed; top: 0; left: 0; width: 340px; height: 100dvh; background: rgba(255, 255, 255, 0.98); z-index: 1000; padding: 20px; display: none; box-shadow: 5px 0 15px rgba(0,0,0,0.2); font-family: sans-serif; box-sizing: border-box; overflow-y: auto; }
-        .field-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        input[type="color"] { width: 100%; height: 40px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; padding: 0; background: none; }
-        
-        button#btn-pub { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; font-size: 16px; transition: background 0.2s; }
-        button#btn-pub:hover { background: #27ae60; }
-        button#btn-pub:disabled { background: #bdc3c7; cursor: not-allowed; }
-        
-        #status { font-size: 12px; color: #34495e; margin-top: 10px; text-align: center; font-weight: bold; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
 
-        /* Estilos base de tu web */
+    <style>
+        /* PANEL DE CONTROL: Oculto por defecto con máxima prioridad */
+        #admin-panel { 
+            display: none !important; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 340px; 
+            height: 100dvh; 
+            background: rgba(255, 255, 255, 0.98); 
+            z-index: 9999; 
+            padding: 25px; 
+            box-shadow: 10px 0 30px rgba(0,0,0,0.15); 
+            font-family: 'Segoe UI', sans-serif; 
+            box-sizing: border-box; 
+            overflow-y: auto;
+            border-right: 1px solid #eee;
+        }
+
+        /* ESTILOS DEL FORMULARIO */
+        .field-group { margin-bottom: 18px; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; }
+        input[type="color"] { width: 100%; height: 45px; border: 1px solid #ddd; border-radius: 10px; cursor: pointer; padding: 2px; background: white; }
+        
+        button#btn-pub { background: #00b894; color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; cursor: pointer; font-weight: 700; margin-top: 15px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 148, 0.2); transition: all 0.2s; }
+        button#btn-pub:hover { background: #00a087; transform: translateY(-1px); }
+        button#btn-pub:active { transform: translateY(0); }
+        button#btn-pub:disabled { background: #dfe6e9; color: #b2bec3; cursor: not-allowed; box-shadow: none; }
+        
+        #status { font-size: 13px; margin-top: 15px; text-align: center; font-weight: 600; min-height: 20px; }
+        hr { border: 0; border-top: 1px solid #f1f1f1; margin: 25px 0; }
+
+        /* ESTILOS DE LA WEB */
         body, html { margin: 0; padding: 0; width: 100%; min-height: 100dvh; display: flex; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; overflow: hidden;
-            /* Usamos las variables CSS para el degradado animado */
             background: linear-gradient(-45deg, var(--color-uno), var(--color-dos), var(--color-tres), var(--color-uno));
             background-size: 400% 400%;
             animation: gradientAnim 15s ease infinite;
         }
         @keyframes gradientAnim { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
         .content { text-align: center; max-width: 600px; padding: 20px; animation: fadeIn 1.5s ease-out; }
         h1 { font-size: clamp(3rem, 15vw, 6rem); color: #2d3436; margin: 0 0 2rem 0; font-weight: 600; letter-spacing: -3px; }
-        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 18px 45px; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 20px 50px; border-radius: 60px; display: inline-block; font-weight: 600; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; }
         .cta-button:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); background-color: #000; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="admin-panel" style="display: block;">
-        <h3 style="margin-top:0;">🛠 Editor de Contenido y Diseño</h3>
+    <div id="admin-panel">
+        <h2 style="margin: 0 0 5px 0; color: #2d3436;">Editor de Web</h2>
+        <p style="font-size: 12px; color: #636e72; margin-bottom: 25px;">Modo Administrador Activo</p>
         
         <div class="field-group">
-            <label>1. TUS CREDENCIALES (Token de GitHub)</label>
+            <label>🔑 GitHub Personal Token</label>
             <input type="password" id="gh-token" placeholder="github_pat_...">
-            <p style="font-size:10px; color:#7f8c8d; margin: 5px 0 0 0;">Esta llave se guarda en este navegador (localStorage) solo para ti.</p>
         </div>
         
         <hr>
 
-        <h4 style="margin:0 0 10px 0; color:#2c3e50;">✍️ Editar Textos</h4>
+        <label>✍️ Contenido de Texto</label>
         <div class="field-group">
-            <label>Título Principal (H1):</label>
-            <input type="text" id="input-h1" placeholder="Ej: Hola." oninput="actualizarVista()">
+            <input type="text" id="input-h1" oninput="actualizarVista()" placeholder="Título">
         </div>
         <div class="field-group">
-            <label>Texto del Botón:</label>
-            <input type="text" id="input-btn" placeholder="Ej: Ver más" oninput="actualizarVista()">
+            <input type="text" id="input-btn" oninput="actualizarVista()" placeholder="Texto del botón">
         </div>
 
         <hr>
 
-        <h4 style="margin:0 0 10px 0; color:#2c3e50;">🎨 Editar Colores del Fondo</h4>
-        <p style="font-size:11px; color:#7f8c8d; margin: -5px 0 10px 0;">El fondo es un degradado animado que usa 3 colores.</p>
-        
-        <div style="display: flex; gap: 10px;">
+        <label>🎨 Paleta de Colores (Fondo)</label>
+        <div style="display: flex; gap: 8px;">
             <div class="field-group" style="flex: 1;">
-                <label>Color 1:</label>
-                <input type="color" id="input-color-uno" value="#74b9ff" oninput="actualizarVista()">
+                <input type="color" id="input-color-uno" oninput="actualizarVista()">
             </div>
             <div class="field-group" style="flex: 1;">
-                <label>Color 2:</label>
-                <input type="color" id="input-color-dos" value="#ffffff" oninput="actualizarVista()">
+                <input type="color" id="input-color-dos" oninput="actualizarVista()">
             </div>
             <div class="field-group" style="flex: 1;">
-                <label>Color 3:</label>
-                <input type="color" id="input-color-tres" value="#81ecec" oninput="actualizarVista()">
+                <input type="color" id="input-color-tres" oninput="actualizarVista()">
             </div>
         </div>
 
-        <button id="btn-pub" onclick="publicarEnGitHub()" disabled="">⏳ Publicando...</button>
-        <p id="status" style="color: rgb(52, 73, 94);">Conectando con la API de GitHub...</p>
+        <button id="btn-pub" onclick="publicarEnGitHub()">🚀 PUBLICAR CAMBIOS</button>
+        <div id="status"></div>
         
-        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
-            <p style="font-size: 11px; color: #95a5a6; text-align: center;">Presiona <b>'E'</b> para cerrar este panel.</p>
+        <div style="margin-top: 40px; border-top: 1px solid #f1f1f1; padding-top: 15px; text-align: center;">
+            <p style="font-size: 11px; color: #b2bec3;">Combinación: <b>Ctrl + Alt + E</b> para cerrar.</p>
         </div>
     </div>
 
@@ -98,16 +113,13 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN (RECUERDA RELLENAR ESTO!)
-        // ==========================================
+        // CONFIGURACIÓN AUTOMÁTICA
         const CONFIG = {
-            usuario: 'colombosebastianprofe-tech', // Escríbelo aquí
-            repo: 'web',      // Escríbelo aquí
-            archivo: 'index.html'                  // El nombre de este archivo
+            usuario: 'colombosebastianprofe-tech', 
+            repo: 'web',      
+            archivo: 'index.html'                  
         };
 
-        // Referencias a los elementos del DOM
         const inputs = {
             token: document.getElementById('gh-token'),
             h1: document.getElementById('input-h1'),
@@ -120,122 +132,116 @@
         const views = {
             h1: document.getElementById('view-h1'),
             btn: document.getElementById('view-btn'),
-            rootStyles: document.documentElement.style // Para cambiar variables CSS
+            rootStyles: document.documentElement.style 
         };
 
         const ui = {
             panel: document.getElementById('admin-panel'),
             btnPub: document.getElementById('btn-pub'),
             status: document.getElementById('status'),
-            dinamicStylesTag: document.getElementById('dinamic-styles') // La etiqueta <style> que editaremos
+            dinamicStylesTag: document.getElementById('dinamic-styles') 
         };
 
-        // 1. INICIALIZACIÓN (Cargar datos al abrir la página)
+        // 1. CARGA INICIAL
         window.onload = () => {
-            // Cargar textos actuales desde el HTML real (para que el form coincida al inicio)
+            // Sincronizar inputs con lo que hay escrito en la web
             inputs.h1.value = views.h1.innerText;
             inputs.btnText.value = views.btn.innerText;
             
-            // Cargar token del localStorage (si existe)
-            const savedToken = localStorage.getItem('gh_token_editable_web');
+            // Recordar token si existe
+            const savedToken = localStorage.getItem('gh_token_web');
             if(savedToken) inputs.token.value = savedToken;
 
-            // Cargar colores actuales del CSS
+            // Leer colores actuales de las variables CSS
             const styles = getComputedStyle(document.documentElement);
-            inputs.colorUno.value = styles.getPropertyValue('--color-uno').trim() || "#74b9ff";
-            inputs.colorDos.value = styles.getPropertyValue('--color-dos').trim() || "#ffffff";
-            inputs.colorTres.value = styles.getPropertyValue('--color-tres').trim() || "#81ecec";
+            inputs.colorUno.value = rgbToHex(styles.getPropertyValue('--color-uno').trim()) || "#74b9ff";
+            inputs.colorDos.value = rgbToHex(styles.getPropertyValue('--color-dos').trim()) || "#ffffff";
+            inputs.colorTres.value = rgbToHex(styles.getPropertyValue('--color-tres').trim()) || "#81ecec";
         };
 
-        // 2. ACTUALIZACIÓN EN TIEMPO REAL (Lo que ves mientras escribes/eliges)
+        // Utilidad para convertir RGB a HEX (necesario para los inputs tipo color)
+        function rgbToHex(rgb) {
+            if(!rgb.startsWith('rgb')) return rgb;
+            const rgbValues = rgb.match(/\d+/g);
+            return "#" + rgbValues.map(x => {
+                const hex = parseInt(x).toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            }).join("");
+        }
+
+        // 2. ACTUALIZACIÓN VISUAL INMEDIATA
         function actualizarVista() {
-            // Actualizar Textos
             views.h1.innerText = inputs.h1.value || "Hola.";
             views.btn.innerText = inputs.btnText.value || "Ver más";
-
-            // Actualizar Colores (cambiando las variables CSS dinámicamente)
             views.rootStyles.setProperty('--color-uno', inputs.colorUno.value);
             views.rootStyles.setProperty('--color-dos', inputs.colorDos.value);
             views.rootStyles.setProperty('--color-tres', inputs.colorTres.value);
         }
 
-        // 3. PUBLICACIÓN EN GITHUB (Guardar cambios permanentemente)
+        // 3. PROCESO DE PUBLICACIÓN
         async function publicarEnGitHub() {
             const token = inputs.token.value.trim();
-            if(!token) return alert("Copia tu Token de GitHub primero");
-            if(CONFIG.usuario === 'TU_USUARIO_DE_GITHUB') return alert("Olvidaste configurar tu usuario de GitHub en el código.");
+            if(!token) return alert("Por favor, introduce tu Token de GitHub.");
 
-            // Guardar token en localStorage para la próxima vez
-            localStorage.setItem('gh_token_editable_web', token);
-
-            // UI State
+            localStorage.setItem('gh_token_web', token);
             ui.btnPub.disabled = true;
-            ui.btnPub.innerText = "⏳ Publicando...";
-            ui.status.innerText = "Conectando con la API de GitHub...";
-            ui.status.style.color = "#34495e";
+            ui.btnPub.innerText = "⏳ Subiendo datos...";
+            ui.status.innerText = "Sincronizando con el repositorio 'web'...";
+            ui.status.style.color = "#2d3436";
 
             try {
-                // A. Obtener el archivo actual para tener el "sha" (la huella digital)
+                // Obtener SHA
                 const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
-                if(!res.ok) throw new Error("No se pudo conectar con GitHub. Verifica el Token y tu usuario/repo.");
-                
+                if(!res.ok) throw new Error("Acceso denegado. Revisa tu Token.");
                 const data = await res.json();
                 const sha = data.sha;
 
-                // B. Preparar el nuevo código (Injectar los valores del formulario en el HTML final)
-                
-                // 1. Crear el bloque CSS <style id="dinamic-styles"> con los nuevos colores
-                const nuevoCssDinamico = `
-        :root {
-            --color-uno: ${inputs.colorUno.value};
-            --color-dos: ${inputs.colorDos.value};
-            --color-tres: ${inputs.colorTres.value};
-        }
-    `;
-                // 2. Insertar ese CSS en la etiqueta <style> del DOM antes de clonar todo el HTML
-                ui.dinamicStylesTag.innerHTML = nuevoCssDinamico;
+                // Preparar HTML final con los nuevos estilos
+                const nuevoCss = `:root { --color-uno: ${inputs.colorUno.value}; --color-dos: ${inputs.colorDos.value}; --color-tres: ${inputs.colorTres.value}; }`;
+                ui.dinamicStylesTag.innerHTML = nuevoCss;
 
-                // 3. Obtener todo el HTML de la página actual (que ya tiene los textos y el CSS actualizado)
-                const nuevoContenidoHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+                const finalHtml = "<" + "!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
-                // C. Enviar el nuevo archivo completo a GitHub (sobreescribiendo el index.html)
+                // Subir
                 const update = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Actualización de contenido y diseño desde formulario web",
-                        content: btoa(unescape(encodeURIComponent(nuevoContenidoHtml))), // Convertir a Base64
+                        message: "Actualización desde panel administrativo",
+                        content: btoa(unescape(encodeURIComponent(finalHtml))),
                         sha: sha
                     })
                 });
 
                 if(update.ok) {
-                    ui.status.innerText = "✅ ¡Publicado con éxito! Espera 1 min y refresca la web.";
-                    ui.status.style.color = "#27ae60";
-                } else {
-                    throw new Error("GitHub rechazó la actualización.");
-                }
+                    ui.status.innerText = "✅ ¡Cambios publicados! Se verán en un momento.";
+                    ui.status.style.color = "#00b894";
+                } else { throw new Error("GitHub rechazó la actualización."); }
             } catch (e) {
                 ui.status.innerText = "❌ Error: " + e.message;
-                ui.status.style.color = "#e74c3c";
+                ui.status.style.color = "#d63031";
             } finally {
-                // Restaurar UI
                 ui.btnPub.disabled = false;
-                ui.btnPub.innerText = "🚀 PUBLICAR EN GITHUB";
+                ui.btnPub.innerText = "🚀 PUBLICAR CAMBIOS";
             }
         }
 
-        // ATAJO DE TECLADO 'E' PARA EDITAR
+        // --- ATAJO DE TECLADO: CTRL + ALT + E (EL CANDADO) ---
         document.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 'e' && e.target.tagName !== 'INPUT') {
-                e.preventDefault(); // Evitar que se escriba la 'e' si el panel está abierto
-                ui.panel.style.display = (ui.panel.style.display === 'block') ? 'none' : 'block';
+            if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'e') {
+                if (document.activeElement.tagName === 'INPUT') return;
+                e.preventDefault(); 
+                
+                const isHidden = ui.panel.style.getPropertyValue('display') !== 'block';
+                if (isHidden) {
+                    ui.panel.style.setProperty('display', 'block', 'important');
+                } else {
+                    ui.panel.style.setProperty('display', 'none', 'important');
+                }
             }
         });
     </script>
-
-
-
-</body></html>
+</body>
+</html>
