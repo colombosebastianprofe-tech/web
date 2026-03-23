@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es" style="--color-uno: #74b9ff; --color-dos: #ffffff; --color-tres: #b9279e;"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Sitio Auto-Editable + Diseño</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap" rel="stylesheet">
     <style id="dinamic-styles">
-        /* ESTILOS EDITABLES (Estos cambiarán con el formulario) */
         :root {
-            --color-uno: #74b9ff; /* Azul pastel */
-            --color-dos: #ffffff; /* Blanco */
-            --color-tres: #81ecec; /* Turquesa pastel */
+            --color-uno: #74b9ff;
+            --color-dos: #ffffff;
+            --color-tres: #b9279e;
         }
     </style>
     <style>
@@ -45,7 +43,7 @@
 </head>
 <body>
 
-    <div id="admin-panel">
+    <div id="admin-panel" style="display: block;">
         <h3 style="margin-top:0;">🛠 Editor de Contenido y Diseño</h3>
         
         <div class="field-group">
@@ -86,8 +84,8 @@
             </div>
         </div>
 
-        <button id="btn-pub" onclick="publicarEnGitHub()">🚀 PUBLICAR EN GITHUB</button>
-        <p id="status"></p>
+        <button id="btn-pub" onclick="publicarEnGitHub()" disabled="">⏳ Publicando...</button>
+        <p id="status" style="color: rgb(52, 73, 94);">Conectando con la API de GitHub...</p>
         
         <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
             <p style="font-size: 11px; color: #95a5a6; text-align: center;">Presiona <b>'E'</b> para cerrar este panel.</p>
@@ -238,5 +236,6 @@
         });
     </script>
 
-</body>
-</html>
+
+
+</body></html>
