@@ -10,16 +10,38 @@
             --text-color: #ffffff;
         }
 
-        /* El truco del centrado total está aquí */
+        /* --- PANEL DE CONTROL ESTILO ACCESS --- */
+        #admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100dvh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 20px;
+            display: none; /* Se activa con la tecla 'E' */
+            font-family: sans-serif;
+            box-sizing: border-box;
+        }
+
+        .field-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        
+        .hint { font-size: 11px; color: #999; margin-top: 20px; border-top: 1px solid #eee; pt: 10px; }
+
+        /* --- TUS ESTILOS ORIGINALES --- */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
-            /* min-height asegura que ocupe toda la pantalla real, restando barras del navegador */
             min-height: 100dvh; 
             display: flex;
-            justify-content: center; /* Centrado horizontal */
-            align-items: center;     /* Centrado vertical */
+            justify-content: center;
+            align-items: center;     
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             background: linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff);
@@ -37,12 +59,11 @@
             text-align: center;
             animation: fadeIn 1.5s ease-out;
             padding: 20px;
-            width: 100%; /* Asegura que el texto no se pegue a los bordes en móviles */
+            width: 100%; 
             max-width: 600px;
         }
 
         h1 {
-            /* clamp hace que la fuente sea gigante en PC y se achique sola en móvil */
             font-size: clamp(3rem, 15vw, 6rem); 
             font-weight: 600;
             letter-spacing: -3px;
@@ -77,10 +98,70 @@
 </head>
 <body>
 
-    <div class="content">
-        <h1>Hola.</h1>
-        <a href="#" class="cta-button">Ver más</a>
+    <div id="admin-panel">
+        <h2 style="margin-top:0; font-size: 18px;">🛠 Formulario de Datos</h2>
+        
+        <div class="field-group">
+            <label>TÍTULO PRINCIPAL (H1)</label>
+            <input type="text" id="input-h1" placeholder="Ej: Hola." oninput="guardarYActualizar()">
+        </div>
+
+        <div class="field-group">
+            <label>TEXTO DEL BOTÓN</label>
+            <input type="text" id="input-btn" placeholder="Ej: Ver más" oninput="guardarYActualizar()">
+        </div>
+
+        <div class="hint">
+            <p>Presiona <b>'E'</b> para cerrar este panel.</p>
+            <p>Los cambios se guardan automáticamente en este navegador.</p>
+        </div>
     </div>
+
+    <div class="content">
+        <h1 id="view-h1">Hola.</h1>
+        <a href="#" id="view-btn" class="cta-button">Ver más</a>
+    </div>
+
+    <script>
+        // Referencias a los elementos
+        const inputH1 = document.getElementById('input-h1');
+        const viewH1 = document.getElementById('view-h1');
+        const inputBtn = document.getElementById('input-btn');
+        const viewBtn = document.getElementById('view-btn');
+        const panel = document.getElementById('admin-panel');
+
+        // 1. CARGAR DATOS AL INICIAR (El "Recuerdo")
+        window.onload = () => {
+            const datosGuardados = JSON.parse(localStorage.getItem('webData'));
+            if (datosGuardados) {
+                viewH1.innerText = datosGuardados.titulo || "Hola.";
+                inputH1.value = datosGuardados.titulo || "Hola.";
+                viewBtn.innerText = datosGuardados.boton || "Ver más";
+                inputBtn.value = datosGuardados.boton || "Ver más";
+            }
+        };
+
+        // 2. GUARDAR Y ACTUALIZAR EN TIEMPO REAL
+        function guardarYActualizar() {
+            // Actualizar vista
+            viewH1.innerText = inputH1.value;
+            viewBtn.innerText = inputBtn.value;
+
+            // Guardar en la "tabla" (localStorage)
+            const datos = {
+                titulo: inputH1.value,
+                boton: inputBtn.value
+            };
+            localStorage.setItem('webData', JSON.stringify(datos));
+        }
+
+        // 3. ATAJO DE TECLADO 'E' PARA EDITAR
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'e' && e.target.tagName !== 'INPUT') {
+                panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+            }
+        });
+    </script>
 
 </body>
 </html>
