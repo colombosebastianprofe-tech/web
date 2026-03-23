@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" style="--color-uno: #74b9ff; --color-dos: #ffffff; --color-tres: #b9279e;"><head>
+<html lang="es" style="--color-uno: #74b9ff; --color-dos: #ffffff; --color-tres: #cb209d;"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Sitio Auto-Editable + Diseño</title>
@@ -8,7 +8,7 @@
         :root {
             --color-uno: #74b9ff;
             --color-dos: #ffffff;
-            --color-tres: #b9279e;
+            --color-tres: #cb209d;
         }
     </style>
     <style>
@@ -99,14 +99,15 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN (RELLENA TUS DATOS AQUÍ)
+        // CONFIGURACIÓN (RECUERDA RELLENAR ESTO!)
         // ==========================================
         const CONFIG = {
-            usuario: 'colombosebastianprofe-tech', 
-            repo: 'web',      
-            archivo: 'index.html'                  
+            usuario: 'colombosebastianprofe-tech', // Escríbelo aquí
+            repo: 'web',      // Escríbelo aquí
+            archivo: 'index.html'                  // El nombre de este archivo
         };
 
+        // Referencias a los elementos del DOM
         const inputs = {
             token: document.getElementById('gh-token'),
             h1: document.getElementById('input-h1'),
@@ -119,98 +120,122 @@
         const views = {
             h1: document.getElementById('view-h1'),
             btn: document.getElementById('view-btn'),
-            rootStyles: document.documentElement.style 
+            rootStyles: document.documentElement.style // Para cambiar variables CSS
         };
 
         const ui = {
             panel: document.getElementById('admin-panel'),
             btnPub: document.getElementById('btn-pub'),
             status: document.getElementById('status'),
-            dinamicStylesTag: document.getElementById('dinamic-styles') 
+            dinamicStylesTag: document.getElementById('dinamic-styles') // La etiqueta <style> que editaremos
         };
 
-        // 1. INICIALIZACIÓN
+        // 1. INICIALIZACIÓN (Cargar datos al abrir la página)
         window.onload = () => {
-            // Asegurar que el panel esté CERRADO al iniciar para cualquier usuario
-            ui.panel.style.display = 'none';
-
+            // Cargar textos actuales desde el HTML real (para que el form coincida al inicio)
             inputs.h1.value = views.h1.innerText;
             inputs.btnText.value = views.btn.innerText;
             
+            // Cargar token del localStorage (si existe)
             const savedToken = localStorage.getItem('gh_token_editable_web');
             if(savedToken) inputs.token.value = savedToken;
 
+            // Cargar colores actuales del CSS
             const styles = getComputedStyle(document.documentElement);
             inputs.colorUno.value = styles.getPropertyValue('--color-uno').trim() || "#74b9ff";
             inputs.colorDos.value = styles.getPropertyValue('--color-dos').trim() || "#ffffff";
             inputs.colorTres.value = styles.getPropertyValue('--color-tres').trim() || "#81ecec";
         };
 
+        // 2. ACTUALIZACIÓN EN TIEMPO REAL (Lo que ves mientras escribes/eliges)
         function actualizarVista() {
+            // Actualizar Textos
             views.h1.innerText = inputs.h1.value || "Hola.";
             views.btn.innerText = inputs.btnText.value || "Ver más";
+
+            // Actualizar Colores (cambiando las variables CSS dinámicamente)
             views.rootStyles.setProperty('--color-uno', inputs.colorUno.value);
             views.rootStyles.setProperty('--color-dos', inputs.colorDos.value);
             views.rootStyles.setProperty('--color-tres', inputs.colorTres.value);
         }
 
+        // 3. PUBLICACIÓN EN GITHUB (Guardar cambios permanentemente)
         async function publicarEnGitHub() {
             const token = inputs.token.value.trim();
             if(!token) return alert("Copia tu Token de GitHub primero");
-            if(CONFIG.usuario.includes('TU_USUARIO')) return alert("Configura tus datos de GitHub en el código.");
+            if(CONFIG.usuario === 'TU_USUARIO_DE_GITHUB') return alert("Olvidaste configurar tu usuario de GitHub en el código.");
 
+            // Guardar token en localStorage para la próxima vez
             localStorage.setItem('gh_token_editable_web', token);
+
+            // UI State
             ui.btnPub.disabled = true;
             ui.btnPub.innerText = "⏳ Publicando...";
-            ui.status.innerText = "Conectando con GitHub...";
+            ui.status.innerText = "Conectando con la API de GitHub...";
+            ui.status.style.color = "#34495e";
 
             try {
+                // A. Obtener el archivo actual para tener el "sha" (la huella digital)
                 const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
+                if(!res.ok) throw new Error("No se pudo conectar con GitHub. Verifica el Token y tu usuario/repo.");
+                
                 const data = await res.json();
                 const sha = data.sha;
 
-                const nuevoCssDinamico = `:root { --color-uno: ${inputs.colorUno.value}; --color-dos: ${inputs.colorDos.value}; --color-tres: ${inputs.colorTres.value}; }`;
+                // B. Preparar el nuevo código (Injectar los valores del formulario en el HTML final)
+                
+                // 1. Crear el bloque CSS <style id="dinamic-styles"> con los nuevos colores
+                const nuevoCssDinamico = `
+        :root {
+            --color-uno: ${inputs.colorUno.value};
+            --color-dos: ${inputs.colorDos.value};
+            --color-tres: ${inputs.colorTres.value};
+        }
+    `;
+                // 2. Insertar ese CSS en la etiqueta <style> del DOM antes de clonar todo el HTML
                 ui.dinamicStylesTag.innerHTML = nuevoCssDinamico;
 
+                // 3. Obtener todo el HTML de la página actual (que ya tiene los textos y el CSS actualizado)
                 const nuevoContenidoHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
+                // C. Enviar el nuevo archivo completo a GitHub (sobreescribiendo el index.html)
                 const update = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Update contenido/diseño",
-                        content: btoa(unescape(encodeURIComponent(nuevoContenidoHtml))),
+                        message: "Actualización de contenido y diseño desde formulario web",
+                        content: btoa(unescape(encodeURIComponent(nuevoContenidoHtml))), // Convertir a Base64
                         sha: sha
                     })
                 });
 
                 if(update.ok) {
-                    ui.status.innerText = "✅ ¡Publicado! Espera 1 min y refresca.";
+                    ui.status.innerText = "✅ ¡Publicado con éxito! Espera 1 min y refresca la web.";
                     ui.status.style.color = "#27ae60";
-                } else { throw new Error("Error en API"); }
+                } else {
+                    throw new Error("GitHub rechazó la actualización.");
+                }
             } catch (e) {
                 ui.status.innerText = "❌ Error: " + e.message;
                 ui.status.style.color = "#e74c3c";
             } finally {
+                // Restaurar UI
                 ui.btnPub.disabled = false;
                 ui.btnPub.innerText = "🚀 PUBLICAR EN GITHUB";
             }
         }
 
-        // --- NUEVA COMBINACIÓN: CTRL + ALT + E ---
+        // ATAJO DE TECLADO 'E' PARA EDITAR
         document.addEventListener('keydown', (e) => {
-            // Verificamos que Ctrl y Alt estén presionados junto con la E
-            if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'e') {
-                // Si el usuario está escribiendo en el campo del Token o un Input, no cerramos el panel
-                if (document.activeElement.tagName === 'INPUT') return;
-                
-                e.preventDefault(); 
+            if (e.key.toLowerCase() === 'e' && e.target.tagName !== 'INPUT') {
+                e.preventDefault(); // Evitar que se escriba la 'e' si el panel está abierto
                 ui.panel.style.display = (ui.panel.style.display === 'block') ? 'none' : 'block';
             }
         });
     </script>
+
 
 
 </body></html>
