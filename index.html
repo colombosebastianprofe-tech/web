@@ -1,111 +1,242 @@
-<html lang="es"><head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio Auto-Editable</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap" rel="stylesheet">
+    <title>Mi Sitio Auto-Editable + Diseño</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <style id="dinamic-styles">
+        /* ESTILOS EDITABLES (Estos cambiarán con el formulario) */
+        :root {
+            --color-uno: #74b9ff; /* Azul pastel */
+            --color-dos: #ffffff; /* Blanco */
+            --color-tres: #81ecec; /* Turquesa pastel */
+        }
+    </style>
     <style>
-        /* [Tus estilos anteriores se mantienen igual] */
-        #admin-panel { position: fixed; top: 0; left: 0; width: 320px; height: 100dvh; background: white; z-index: 1000; padding: 20px; display: none; box-shadow: 5px 0 15px rgba(0,0,0,0.2); font-family: sans-serif; }
+        /* ESTILOS FIJOS (No cambian) */
+        #admin-panel { position: fixed; top: 0; left: 0; width: 340px; height: 100dvh; background: rgba(255, 255, 255, 0.98); z-index: 1000; padding: 20px; display: none; box-shadow: 5px 0 15px rgba(0,0,0,0.2); font-family: sans-serif; box-sizing: border-box; overflow-y: auto; }
         .field-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; }
-        button { background: #2ecc71; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background: #27ae60; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        input[type="color"] { width: 100%; height: 40px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; padding: 0; background: none; }
         
+        button#btn-pub { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; font-size: 16px; transition: background 0.2s; }
+        button#btn-pub:hover { background: #27ae60; }
+        button#btn-pub:disabled { background: #bdc3c7; cursor: not-allowed; }
+        
+        #status { font-size: 12px; color: #34495e; margin-top: 10px; text-align: center; font-weight: bold; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+
         /* Estilos base de tu web */
-        body, html { margin: 0; padding: 0; width: 100%; min-height: 100dvh; display: flex; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; background: linear-gradient(-45deg, #74b9ff, #ffffff, #81ecec, #74b9ff); background-size: 400% 400%; animation: gradient 10s ease infinite; }
-        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .content { text-align: center; max-width: 600px; }
-        h1 { font-size: clamp(3rem, 15vw, 6rem); color: #2d3436; margin: 0 0 2rem 0; }
-        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 18px 45px; border-radius: 50px; display: inline-block; }
+        body, html { margin: 0; padding: 0; width: 100%; min-height: 100dvh; display: flex; justify-content: center; align-items: center; font-family: 'Inter', sans-serif; overflow: hidden;
+            /* Usamos las variables CSS para el degradado animado */
+            background: linear-gradient(-45deg, var(--color-uno), var(--color-dos), var(--color-tres), var(--color-uno));
+            background-size: 400% 400%;
+            animation: gradientAnim 15s ease infinite;
+        }
+        @keyframes gradientAnim { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .content { text-align: center; max-width: 600px; padding: 20px; animation: fadeIn 1.5s ease-out; }
+        h1 { font-size: clamp(3rem, 15vw, 6rem); color: #2d3436; margin: 0 0 2rem 0; font-weight: 600; letter-spacing: -3px; }
+        .cta-button { text-decoration: none; background: #2d3436; color: white; padding: 18px 45px; border-radius: 50px; display: inline-block; font-weight: 600; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+        .cta-button:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); background-color: #000; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="admin-panel" style="display: block;">
-        <h3>🛠 Editor en Vivo</h3>
+    <div id="admin-panel">
+        <h3 style="margin-top:0;">🛠 Editor de Contenido y Diseño</h3>
+        
         <div class="field-group">
-            <label>Token de GitHub:</label>
-            <input type="password" id="gh-token" placeholder="Pega tu github_pat aquí">
+            <label>1. TUS CREDENCIALES (Token de GitHub)</label>
+            <input type="password" id="gh-token" placeholder="github_pat_...">
+            <p style="font-size:10px; color:#7f8c8d; margin: 5px 0 0 0;">Esta llave se guarda en este navegador (localStorage) solo para ti.</p>
         </div>
+        
         <hr>
+
+        <h4 style="margin:0 0 10px 0; color:#2c3e50;">✍️ Editar Textos</h4>
         <div class="field-group">
-            <label>Título:</label>
-            <input type="text" id="input-h1" oninput="actualizarVista()">
+            <label>Título Principal (H1):</label>
+            <input type="text" id="input-h1" placeholder="Ej: Hola." oninput="actualizarVista()">
         </div>
         <div class="field-group">
-            <label>Botón:</label>
-            <input type="text" id="input-btn" oninput="actualizarVista()">
+            <label>Texto del Botón:</label>
+            <input type="text" id="input-btn" placeholder="Ej: Ver más" oninput="actualizarVista()">
         </div>
-        <button onclick="publicarEnGitHub()">🚀 PUBLICAR EN GITHUB</button>
-        <p id="status" style="font-size: 12px; color: blue;">Conectando con GitHub...</p>
+
+        <hr>
+
+        <h4 style="margin:0 0 10px 0; color:#2c3e50;">🎨 Editar Colores del Fondo</h4>
+        <p style="font-size:11px; color:#7f8c8d; margin: -5px 0 10px 0;">El fondo es un degradado animado que usa 3 colores.</p>
+        
+        <div style="display: flex; gap: 10px;">
+            <div class="field-group" style="flex: 1;">
+                <label>Color 1:</label>
+                <input type="color" id="input-color-uno" value="#74b9ff" oninput="actualizarVista()">
+            </div>
+            <div class="field-group" style="flex: 1;">
+                <label>Color 2:</label>
+                <input type="color" id="input-color-dos" value="#ffffff" oninput="actualizarVista()">
+            </div>
+            <div class="field-group" style="flex: 1;">
+                <label>Color 3:</label>
+                <input type="color" id="input-color-tres" value="#81ecec" oninput="actualizarVista()">
+            </div>
+        </div>
+
+        <button id="btn-pub" onclick="publicarEnGitHub()">🚀 PUBLICAR EN GITHUB</button>
+        <p id="status"></p>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
+            <p style="font-size: 11px; color: #95a5a6; text-align: center;">Presiona <b>'E'</b> para cerrar este panel.</p>
+        </div>
     </div>
 
     <div class="content">
-        <h1 id="view-h1">Hola</h1>
-        <a href="#" id="view-btn" class="cta-button">Comenzar</a>
+        <h1 id="view-h1">Hola.</h1>
+        <a href="#" id="view-btn" class="cta-button">Ver más</a>
     </div>
 
     <script>
-        // CONFIGURACIÓN (Rellena esto con tus datos)
+        // ==========================================
+        // CONFIGURACIÓN (RECUERDA RELLENAR ESTO!)
+        // ==========================================
         const CONFIG = {
-            usuario: 'colombosebastianprofe-tech',
-            repo: 'web',
-            archivo: 'index.html' // El nombre de este mismo archivo
+            usuario: 'colombosebastianprofe-tech', // Escríbelo aquí
+            repo: 'web',      // Escríbelo aquí
+            archivo: 'index.html'                  // El nombre de este archivo
         };
 
+        // Referencias a los elementos del DOM
+        const inputs = {
+            token: document.getElementById('gh-token'),
+            h1: document.getElementById('input-h1'),
+            btnText: document.getElementById('input-btn'),
+            colorUno: document.getElementById('input-color-uno'),
+            colorDos: document.getElementById('input-color-dos'),
+            colorTres: document.getElementById('input-color-tres')
+        };
+        
+        const views = {
+            h1: document.getElementById('view-h1'),
+            btn: document.getElementById('view-btn'),
+            rootStyles: document.documentElement.style // Para cambiar variables CSS
+        };
+
+        const ui = {
+            panel: document.getElementById('admin-panel'),
+            btnPub: document.getElementById('btn-pub'),
+            status: document.getElementById('status'),
+            dinamicStylesTag: document.getElementById('dinamic-styles') // La etiqueta <style> que editaremos
+        };
+
+        // 1. INICIALIZACIÓN (Cargar datos al abrir la página)
+        window.onload = () => {
+            // Cargar textos actuales desde el HTML real (para que el form coincida al inicio)
+            inputs.h1.value = views.h1.innerText;
+            inputs.btnText.value = views.btn.innerText;
+            
+            // Cargar token del localStorage (si existe)
+            const savedToken = localStorage.getItem('gh_token_editable_web');
+            if(savedToken) inputs.token.value = savedToken;
+
+            // Cargar colores actuales del CSS
+            const styles = getComputedStyle(document.documentElement);
+            inputs.colorUno.value = styles.getPropertyValue('--color-uno').trim() || "#74b9ff";
+            inputs.colorDos.value = styles.getPropertyValue('--color-dos').trim() || "#ffffff";
+            inputs.colorTres.value = styles.getPropertyValue('--color-tres').trim() || "#81ecec";
+        };
+
+        // 2. ACTUALIZACIÓN EN TIEMPO REAL (Lo que ves mientras escribes/eliges)
         function actualizarVista() {
-            document.getElementById('view-h1').innerText = document.getElementById('input-h1').value || "Hola.";
-            document.getElementById('view-btn').innerText = document.getElementById('input-btn').value || "Ver más";
+            // Actualizar Textos
+            views.h1.innerText = inputs.h1.value || "Hola.";
+            views.btn.innerText = inputs.btnText.value || "Ver más";
+
+            // Actualizar Colores (cambiando las variables CSS dinámicamente)
+            views.rootStyles.setProperty('--color-uno', inputs.colorUno.value);
+            views.rootStyles.setProperty('--color-dos', inputs.colorDos.value);
+            views.rootStyles.setProperty('--color-tres', inputs.colorTres.value);
         }
 
+        // 3. PUBLICACIÓN EN GITHUB (Guardar cambios permanentemente)
         async function publicarEnGitHub() {
-            const token = document.getElementById('gh-token').value;
-            const status = document.getElementById('status');
+            const token = inputs.token.value.trim();
             if(!token) return alert("Copia tu Token de GitHub primero");
+            if(CONFIG.usuario === 'TU_USUARIO_DE_GITHUB') return alert("Olvidaste configurar tu usuario de GitHub en el código.");
 
-            status.innerText = "Conectando con GitHub...";
+            // Guardar token en localStorage para la próxima vez
+            localStorage.setItem('gh_token_editable_web', token);
+
+            // UI State
+            ui.btnPub.disabled = true;
+            ui.btnPub.innerText = "⏳ Publicando...";
+            ui.status.innerText = "Conectando con la API de GitHub...";
+            ui.status.style.color = "#34495e";
 
             try {
-                // 1. Obtener el archivo actual para tener el "sha" (la huella digital)
+                // A. Obtener el archivo actual para tener el "sha" (la huella digital)
                 const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
+                if(!res.ok) throw new Error("No se pudo conectar con GitHub. Verifica el Token y tu usuario/repo.");
+                
                 const data = await res.json();
                 const sha = data.sha;
 
-                // 2. Preparar el nuevo código (clonamos el HTML actual)
-                // Para simplificar, enviamos todo el documento actual
-                const nuevoContenido = document.documentElement.outerHTML;
+                // B. Preparar el nuevo código (Injectar los valores del formulario en el HTML final)
+                
+                // 1. Crear el bloque CSS <style id="dinamic-styles"> con los nuevos colores
+                const nuevoCssDinamico = `
+        :root {
+            --color-uno: ${inputs.colorUno.value};
+            --color-dos: ${inputs.colorDos.value};
+            --color-tres: ${inputs.colorTres.value};
+        }
+    `;
+                // 2. Insertar ese CSS en la etiqueta <style> del DOM antes de clonar todo el HTML
+                ui.dinamicStylesTag.innerHTML = nuevoCssDinamico;
 
-                // 3. Enviar a GitHub
+                // 3. Obtener todo el HTML de la página actual (que ya tiene los textos y el CSS actualizado)
+                const nuevoContenidoHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+                // C. Enviar el nuevo archivo completo a GitHub (sobreescribiendo el index.html)
                 const update = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Actualización desde formulario web",
-                        content: btoa(unescape(encodeURIComponent(nuevoContenido))), // Convertir a Base64
+                        message: "Actualización de contenido y diseño desde formulario web",
+                        content: btoa(unescape(encodeURIComponent(nuevoContenidoHtml))), // Convertir a Base64
                         sha: sha
                     })
                 });
 
                 if(update.ok) {
-                    status.innerText = "✅ ¡Publicado! En 1 min se verá el cambio.";
+                    ui.status.innerText = "✅ ¡Publicado con éxito! Espera 1 min y refresca la web.";
+                    ui.status.style.color = "#27ae60";
                 } else {
-                    status.innerText = "❌ Error al publicar.";
+                    throw new Error("GitHub rechazó la actualización.");
                 }
             } catch (e) {
-                status.innerText = "❌ Error de conexión.";
+                ui.status.innerText = "❌ Error: " + e.message;
+                ui.status.style.color = "#e74c3c";
+            } finally {
+                // Restaurar UI
+                ui.btnPub.disabled = false;
+                ui.btnPub.innerText = "🚀 PUBLICAR EN GITHUB";
             }
         }
 
-        // Tecla 'E' para mostrar panel
+        // ATAJO DE TECLADO 'E' PARA EDITAR
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'e' && e.target.tagName !== 'INPUT') {
-                const p = document.getElementById('admin-panel');
-                p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+                e.preventDefault(); // Evitar que se escriba la 'e' si el panel está abierto
+                ui.panel.style.display = (ui.panel.style.display === 'block') ? 'none' : 'block';
             }
         });
     </script>
 
-
-</body></html>
+</body>
+</html>
