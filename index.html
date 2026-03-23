@@ -183,7 +183,7 @@
             ui.status.style.color = "#2d3436";
 
             try {
-                // Obtener SHA
+                // 1. Obtener SHA
                 const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     headers: { 'Authorization': `token ${token}` }
                 });
@@ -191,13 +191,20 @@
                 const data = await res.json();
                 const sha = data.sha;
 
-                // Preparar HTML final con los nuevos estilos
+                // 2. Preparar el CSS dinámico
                 const nuevoCss = `:root { --color-uno: ${inputs.colorUno.value}; --color-dos: ${inputs.colorDos.value}; --color-tres: ${inputs.colorTres.value}; }`;
                 ui.dinamicStylesTag.innerHTML = nuevoCss;
 
+                // --- EL TRUCO: CERRAR EL PANEL ANTES DE CLONAR EL HTML ---
+                ui.panel.style.setProperty('display', 'none', 'important'); // <-- OCULTAR
+
+                // 3. Capturar el HTML (ahora que el panel está oculto)
                 const finalHtml = "<" + "!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
-                // Subir
+                // --- VOLVER A MOSTRAR EL PANEL PARA TI ---
+                ui.panel.style.setProperty('display', 'block', 'important'); // <-- VOLVER A MOSTRAR
+
+                // 4. Subir a GitHub
                 const update = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${CONFIG.archivo}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
@@ -209,7 +216,7 @@
                 });
 
                 if(update.ok) {
-                    ui.status.innerText = "✅ ¡Cambios publicados! Se verán en un momento.";
+                    ui.status.innerText = "✅ ¡Publicado con éxito! Espera 1 min.";
                     ui.status.style.color = "#00b894";
                 } else { throw new Error("GitHub rechazó la actualización."); }
             } catch (e) {
