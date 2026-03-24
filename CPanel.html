@@ -59,7 +59,6 @@
     let originalHTML = "";
     let fileSHA = "";
 
-    // Recordar token
     window.onload = () => {
         const saved = localStorage.getItem('gh_token_central');
         if(saved) document.getElementById('token').value = saved;
@@ -73,7 +72,7 @@
         if(!file || !token) return alert("Completa los datos");
         localStorage.setItem('gh_token_central', token);
 
-        status.innerText = "⏳ Leyendo archivo...";
+        status.innerText = "⏳ Leyendo archivo y analizando diseño...";
         
         try {
             const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${file}`, {
@@ -85,7 +84,7 @@
 
             analizarYCrearFormulario(originalHTML);
             
-            status.innerText = "✅ Escaneo completado";
+            status.innerText = "✅ Escaneo de contenido y colores listo";
             status.style.color = "#27ae60";
         } catch (e) {
             status.innerText = "❌ Error al cargar el archivo";
@@ -96,19 +95,51 @@
     function analizarYCrearFormulario(html) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
-        // Buscamos todos los elementos que tengan un ID que empiece por 'edit-'
-        const editables = doc.querySelectorAll('[id^="edit-"]');
-        
         const container = document.getElementById('dynamic-inputs');
         container.innerHTML = "";
-        
+
+        // --- BLOQUE 1: COLORES DINÁMICOS ---
+        const styleTag = doc.getElementById('dinamic-styles');
+        if(styleTag) {
+            const colorSection = document.createElement('div');
+            colorSection.innerHTML = "<label style='color: #0984e3; margin-top: 10px;'>🎨 Paleta de Diseño</label>";
+            
+            // Extraer colores usando Regex (busca patrones tipo #ffffff o #abc)
+            const coloresEncontrados = styleTag.innerHTML.match(/#[0-9a-fA-F]{3,6}/g);
+            
+            if(coloresEncontrados) {
+                const flexRow = document.createElement('div');
+                flexRow.style.display = "flex";
+                flexRow.style.gap = "10px";
+                flexRow.style.marginBottom = "20px";
+
+                coloresEncontrados.forEach((color, index) => {
+                    const colorWrap = document.createElement('div');
+                    colorWrap.style.flex = "1";
+                    colorWrap.innerHTML = `
+                        <input type="color" class="input-color-dinamico" value="${color}" style="height: 50px; cursor: pointer;">
+                    `;
+                    flexRow.appendChild(colorWrap);
+                });
+                container.appendChild(colorSection);
+                container.appendChild(flexRow);
+            }
+        }
+
+        // --- BLOQUE 2: TEXTOS EDITABLES (IDs con edit-) ---
+        const textSection = document.createElement('label');
+        textSection.innerText = "📝 Contenidos de Texto";
+        textSection.style.color = "#0984e3";
+        container.appendChild(textSection);
+
+        const editables = doc.querySelectorAll('[id^="edit-"]');
         editables.forEach(el => {
             const labelText = el.id.replace('edit-', '').replace(/-/g, ' ');
             const div = document.createElement('div');
             div.className = 'editor-card';
             div.innerHTML = `
                 <label>${labelText}</label>
-                <input type="text" data-id="${el.id}" value="${el.innerText}" oninput="debugChange()">
+                <input type="text" data-id="${el.id}" value="${el.innerText.trim()}">
             `;
             container.appendChild(div);
         });
@@ -122,44 +153,48 @@
         const token = document.getElementById('token').value;
         const status = document.getElementById('status');
         
-        status.innerText = "🚀 Procesando cambios...";
+        status.innerText = "🚀 Inyectando cambios en el código...";
 
-        // 1. Crear copia del HTML original para modificarlo
         const parser = new DOMParser();
         const doc = parser.parseFromString(originalHTML, "text/html");
 
-        // 2. Aplicar los valores de los inputs al HTML
-        const inputs = document.querySelectorAll('#dynamic-inputs input');
-        inputs.forEach(input => {
-            const elementInDoc = doc.getElementById(input.getAttribute('data-id'));
-            if(elementInDoc) elementInDoc.innerText = input.value;
+        // 1. Guardar Textos
+        const inputsText = document.querySelectorAll('#dynamic-inputs input[type="text"]');
+        inputsText.forEach(input => {
+            const el = doc.getElementById(input.getAttribute('data-id'));
+            if(el) el.innerText = input.value;
         });
+
+        // 2. Guardar Colores (Reconstruir la etiqueta de estilo)
+        const inputsColor = document.querySelectorAll('.input-color-dinamico');
+        if(inputsColor.length >= 3) {
+            const nuevoStyle = `:root { --color-uno: ${inputsColor[0].value}; --color-dos: ${inputsColor[1].value}; --color-tres: ${inputsColor[2].value}; }`;
+            const styleTag = doc.getElementById('dinamic-styles');
+            if(styleTag) styleTag.innerHTML = nuevoStyle;
+        }
 
         const finalHTML = "<" + "!DOCTYPE html>\n" + doc.documentElement.outerHTML;
 
-        // 3. Subir a GitHub
         try {
             const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${file}`, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: `Update via CPanel: ${file}`,
+                    message: `CPanel Update: ${file}`,
                     content: btoa(unescape(encodeURIComponent(finalHTML))),
                     sha: fileSHA
                 })
             });
 
             if(res.ok) {
-                status.innerText = "✨ ¡Página actualizada con éxito!";
+                status.innerText = "✨ ¡Cambios aplicados! Todo está en orden.";
                 const data = await res.json();
-                fileSHA = data.content.sha; // Actualizar SHA para ediciones sucesivas
+                fileSHA = data.content.sha;
             } else { throw new Error(); }
         } catch (e) {
-            status.innerText = "❌ Error al guardar";
+            status.innerText = "❌ Error al sincronizar con GitHub";
         }
     }
-
-    function debugChange() { console.log("Editando..."); }
 </script>
 
 </body>
