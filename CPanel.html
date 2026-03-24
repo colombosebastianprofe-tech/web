@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPanel Central | Gestor de Contenidos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0984e3; --bg: #f5f6fa; --text: #2f3640; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .container { width: 90%; max-width: 500px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin: 40px 0; }
+        h1 { font-size: 22px; margin-bottom: 20px; text-align: center; color: var(--primary); }
+        
+        .setup-group { border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; color: #7f8c8d; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #dcdde1; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 14px; }
+        .btn-load { background: var(--primary); color: white; }
+        .btn-save { background: #27ae60; color: white; margin-top: 20px; display: none; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #editor-fields { margin-top: 20px; display: none; }
+        .editor-card { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .status { text-align: center; font-size: 13px; margin-top: 15px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛠 CPanel Central</h1>
+
+    <div class="setup-group">
+        <label>1. Credenciales</label>
+        <input type="password" id="token" placeholder="Tu GitHub Token">
+        
+        <label>2. Página a editar</label>
+        <input type="text" id="filename" placeholder="Ej: index.html">
+        
+        <button class="btn-load" onclick="cargarPagina()">🔍 ESCANEAR PÁGINA</button>
+    </div>
+
+    <div id="editor-fields">
+        <label>📝 Campos detectados:</label>
+        <div id="dynamic-inputs"></div>
+        <button id="btn-save" class="btn-save" onclick="guardarCambios()">🚀 PUBLICAR EN GITHUB</button>
+    </div>
+
+    <div id="status" class="status"></div>
+</div>
+
+<script>
+    const CONFIG = {
+        usuario: 'colombosebastianprofe-tech',
+        repo: 'web'
+    };
+
+    let originalHTML = "";
+    let fileSHA = "";
+
+    // Recordar token
+    window.onload = () => {
+        const saved = localStorage.getItem('gh_token_central');
+        if(saved) document.getElementById('token').value = saved;
+    };
+
+    async function cargarPagina() {
+        const file = document.getElementById('filename').value;
+        const token = document.getElementById('token').value;
+        const status = document.getElementById('status');
+        
+        if(!file || !token) return alert("Completa los datos");
+        localStorage.setItem('gh_token_central', token);
+
+        status.innerText = "⏳ Leyendo archivo...";
+        
+        try {
+            const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${file}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            const data = await res.json();
+            fileSHA = data.sha;
+            originalHTML = decodeURIComponent(escape(atob(data.content)));
+
+            analizarYCrearFormulario(originalHTML);
+            
+            status.innerText = "✅ Escaneo completado";
+            status.style.color = "#27ae60";
+        } catch (e) {
+            status.innerText = "❌ Error al cargar el archivo";
+            status.style.color = "#e74c3c";
+        }
+    }
+
+    function analizarYCrearFormulario(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        // Buscamos todos los elementos que tengan un ID que empiece por 'edit-'
+        const editables = doc.querySelectorAll('[id^="edit-"]');
+        
+        const container = document.getElementById('dynamic-inputs');
+        container.innerHTML = "";
+        
+        editables.forEach(el => {
+            const labelText = el.id.replace('edit-', '').replace(/-/g, ' ');
+            const div = document.createElement('div');
+            div.className = 'editor-card';
+            div.innerHTML = `
+                <label>${labelText}</label>
+                <input type="text" data-id="${el.id}" value="${el.innerText}" oninput="debugChange()">
+            `;
+            container.appendChild(div);
+        });
+
+        document.getElementById('editor-fields').style.display = 'block';
+        document.getElementById('btn-save').style.display = 'block';
+    }
+
+    async function guardarCambios() {
+        const file = document.getElementById('filename').value;
+        const token = document.getElementById('token').value;
+        const status = document.getElementById('status');
+        
+        status.innerText = "🚀 Procesando cambios...";
+
+        // 1. Crear copia del HTML original para modificarlo
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(originalHTML, "text/html");
+
+        // 2. Aplicar los valores de los inputs al HTML
+        const inputs = document.querySelectorAll('#dynamic-inputs input');
+        inputs.forEach(input => {
+            const elementInDoc = doc.getElementById(input.getAttribute('data-id'));
+            if(elementInDoc) elementInDoc.innerText = input.value;
+        });
+
+        const finalHTML = "<" + "!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+
+        // 3. Subir a GitHub
+        try {
+            const res = await fetch(`https://api.github.com/repos/${CONFIG.usuario}/${CONFIG.repo}/contents/${file}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: `Update via CPanel: ${file}`,
+                    content: btoa(unescape(encodeURIComponent(finalHTML))),
+                    sha: fileSHA
+                })
+            });
+
+            if(res.ok) {
+                status.innerText = "✨ ¡Página actualizada con éxito!";
+                const data = await res.json();
+                fileSHA = data.content.sha; // Actualizar SHA para ediciones sucesivas
+            } else { throw new Error(); }
+        } catch (e) {
+            status.innerText = "❌ Error al guardar";
+        }
+    }
+
+    function debugChange() { console.log("Editando..."); }
+</script>
+
+</body>
+</html>
