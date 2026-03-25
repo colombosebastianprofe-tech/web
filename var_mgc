@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP: Varita Mágica | Sebastián Colombo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style id="dinamic-styles">
+        :root {
+            --color-uno: #34495e;
+            --color-dos: #2c3e50;
+            --color-tres: #3498db;
+        }
+    </style>
+
+    <style>
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; background: #f4f7f6; color: #333; 
+            line-height: 1.6; padding-bottom: 50px;
+        }
+        header { 
+            background: linear-gradient(135deg, var(--color-uno), var(--color-dos));
+            color: white; padding: 40px 20px; text-align: center; margin-bottom: 30px;
+        }
+        .container { max-width: 700px; margin: 0 auto; padding: 0 20px; }
+        .card { 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--color-tres);
+        }
+        h1 { margin: 0; font-size: 1.8rem; }
+        h3 { color: var(--color-tres); margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        ul { list-style: none; padding: 0; }
+        li { 
+            margin-bottom: 15px; padding-left: 30px; position: relative; 
+            font-size: 0.95rem;
+        }
+        li::before { 
+            content: "→"; position: absolute; left: 0; color: var(--color-tres); font-weight: bold; 
+        }
+
+        .action-box { 
+            display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;
+        }
+        .btn { 
+            text-decoration: none; padding: 12px 20px; border-radius: 8px; 
+            font-weight: 600; font-size: 0.9rem; transition: 0.3s; flex: 1; text-align: center;
+        }
+        .btn-photopea { background: #222; color: white; }
+        .btn-download { background: var(--color-tres); color: white; }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
+
+        .footer-nav { text-align: center; margin-top: 30px; }
+        .footer-nav a { color: #888; text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1 id="edit-titulo-tp">(2) 1° Bim - Varita mágica</h1>
+        <p id="edit-subtitulo">Educación Tecnológica - Profe Sebastián Colombo</p>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h3 id="edit-sec-1">1. Preparación de Materiales</h3>
+        <p id="edit-desc-1">Antes de empezar, asegúrate de tener el archivo base y la herramienta abierta:</p>
+        
+        <div class="action-box">
+            <a href="#" id="edit-link-recurso" class="btn btn-download">📥 Descargar Foca de California.jpg</a>
+            <a href="https://www.photopea.com/" target="_blank" class="btn btn-photopea">🎨 Abrir Photopea</a>
+        </div>
+
+        <h3 id="edit-sec-2">2. Procedimiento de Edición</h3>
+        <ul>
+            <li id="edit-paso-1">Abrí la imagen en Photopea ("Abrir desde la computadora").</li>
+            <li id="edit-paso-2">Seleccioná la <strong>Varita Mágica</strong> en la barra izquierda.</li>
+            <li id="edit-paso-3">Configurá la <strong>Tolerancia en 30</strong> (arriba del lienzo).</li>
+            <li id="edit-paso-4">Cliqueá en el cielo y borrá con la tecla <strong>Supr</strong> (repetí hasta limpiar todo).</li>
+            <li id="edit-paso-5">Menú Selección → <strong>Deseleccionar</strong>.</li>
+        </ul>
+
+        <h3 id="edit-sec-3">3. Personalización de Capas</h3>
+        <p id="edit-desc-capas">Agregá 4 capas de texto con un color RGB de tu elección:</p>
+        <ul>
+            <li id="edit-capa-1">1) Nombre y Apellido (cambiá fuente y tamaño).</li>
+            <li id="edit-capa-2">2) Curso (cambiá fuente y tamaño).</li>
+            <li id="edit-capa-3">3) Año (cambiá fuente y tamaño).</li>
+            <li id="edit-capa-4">4) Código Hexadecimal del color elegido.</li>
+        </ul>
+
+        <h3 id="edit-sec-4">4. Guardado y Entrega</h3>
+        <p id="edit-paso-final">Andá a <strong>Archivo → Guardar como PSD</strong>. Nombre del archivo: "TP 2". Subilo a Classroom y entregá.</p>
+    </div>
+
+    <div class="footer-nav">
+        <a href="index.html">← Volver al Menú Principal</a>
+    </div>
+</div>
+
+</body>
+</html>
