@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebastián Colombo | Perfil Profesional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style id="dinamic-styles">
+        :root {
+            --color-uno: #2c3e50;
+            --color-dos: #34495e;
+            --color-tres: #1abc9c;
+        }
+    </style>
+
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; min-height: 100vh; 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--color-uno), var(--color-dos), var(--color-tres));
+            background-size: 400% 400%;
+            animation: gradientAnim 12s ease infinite;
+            color: white; display: flex; justify-content: center; align-items: center;
+        }
+        @keyframes gradientAnim { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        .card {
+            max-width: 400px; width: 85%; padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px); border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .profile-img { width: 80px; height: 80px; background: white; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--color-uno); font-weight: 600; }
+
+        h2 { font-size: 1.6rem; margin: 0 0 5px 0; font-weight: 600; }
+        .tagline { font-size: 0.9rem; opacity: 0.8; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .links-container { display: flex; flex-direction: column; gap: 12px; }
+
+        .btn-link {
+            text-decoration: none; padding: 14px; border-radius: 12px;
+            font-weight: 600; font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9); color: #2c3e50;
+            transition: 0.3s; border: 1px solid white;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-link:hover { transform: translateY(-3px); background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        .btn-cv { background: var(--color-tres); color: white; border: none; }
+        .btn-cv:hover { background: #16a085; color: white; }
+
+        .back-home { display: block; margin-top: 30px; color: white; text-decoration: none; font-size: 0.8rem; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="profile-img">SC</div>
+        <h2 id="edit-nombre">Sebastián Colombo</h2>
+        <div id="edit-puesto" class="tagline">Profesor de Tecnología de la Información</div>
+
+        <div class="links-container">
+            <a href="https://drive.google.com/file/d/1dyjbOiJEj0xB8HpWL6XVjrv879OuiguS/view?usp=drive_link" id="edit-link-cv" class="btn-link btn-cv">
+                📄 Descargar CV (PDF)
+            </a>
+
+            <a href="https://wa.me/5491158522401?text=Hola%20Sebastián" id="edit-link-wa" class="btn-link">
+                📱 WhatsApp Directo
+            </a>
+            
+            <a href="https://www.linkedin.com/in/sebastian-rodrigo-colombo-39b1b635b/" id="edit-link-li" class="btn-link">
+                💼 LinkedIn
+            </a>
+
+            <a href="mailto:sebastian.colombo@bue.edu.ar" id="edit-link-mail" class="btn-link">
+                ✉️ Correo Oficial
+            </a>
+        </div>
+
+        <a href="showroom.html" id="edit-home" class="back-home">← Volver al Edificio Virtual</a>
+    </div>
+
+</body>
+</html>
