@@ -1,99 +1,120 @@
 <!DOCTYPE html>
-<html lang="es"><head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP: Varita Mágica | Sebastián Colombo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet">
+    <title>Consigna Digital | Prof. Sebastián Colombo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     
-    <style id="dinamic-styles">:root { --color-uno: #34495e; --color-dos: #2c3e50; --color-tres: #3498db; }</style>
+    <style id="dinamic-styles">
+        :root {
+            --color-uno: #1e272e; /* Azul Medianoche Institucional */
+            --color-dos: #485460;
+            --color-tres: #05c46b; /* Verde de "Activo/Entregable" */
+        }
+    </style>
 
     <style>
-        body { 
-            margin: 0; font-family: 'Inter', sans-serif; background: #f4f7f6; color: #333; 
-            line-height: 1.6; padding-bottom: 50px;
-        }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #f1f2f6; color: #2f3542; line-height: 1.7; }
+        
+        /* HEADER INSTITUCIONAL */
         header { 
             background: linear-gradient(135deg, var(--color-uno), var(--color-dos));
-            color: white; padding: 40px 20px; text-align: center; margin-bottom: 30px;
+            color: white; padding: 60px 20px; text-align: center;
+            border-bottom: 6px solid var(--color-tres);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .container { max-width: 700px; margin: 0 auto; padding: 0 20px; }
-        .card { 
-            background: white; padding: 30px; border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--color-tres);
-        }
-        h1 { margin: 0; font-size: 1.8rem; }
-        h3 { color: var(--color-tres); margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .inst-name { font-weight: 300; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem; opacity: 0.8; margin-bottom: 10px; display: block; }
+        header h1 { margin: 0; font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
+        .badge { display: inline-block; background: var(--color-tres); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-top: 15px; }
+
+        .container { max-width: 800px; margin: -30px auto 50px; padding: 0 20px; }
         
-        ul { list-style: none; padding: 0; }
-        li { 
-            margin-bottom: 15px; padding-left: 30px; position: relative; 
-            font-size: 0.95rem;
-        }
-        li::before { 
-            content: "→"; position: absolute; left: 0; color: var(--color-tres); font-weight: bold; 
+        .main-card { 
+            background: white; padding: 40px; border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
-        .action-box { 
-            display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;
+        /* ESTILO DE PASOS */
+        h3 { color: var(--color-uno); margin-top: 30px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        h3::before { content: ''; width: 4px; height: 20px; background: var(--color-tres); border-radius: 2px; }
+
+        .step-list { padding: 0; margin: 20px 0; }
+        .step-item { 
+            display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee;
         }
+        .step-num { 
+            background: #f1f2f6; color: var(--color-uno); width: 28px; height: 28px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        /* BOTONES DE ACCIÓN */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .btn { 
-            text-decoration: none; padding: 12px 20px; border-radius: 8px; 
-            font-weight: 600; font-size: 0.9rem; transition: 0.3s; flex: 1; text-align: center;
+            text-decoration: none; padding: 15px; border-radius: 12px; 
+            font-weight: 600; text-align: center; transition: 0.3s; border: 2px solid transparent;
         }
-        .btn-photopea { background: #222; color: white; }
-        .btn-download { background: var(--color-tres); color: white; }
-        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        .btn-primary { background: var(--color-uno); color: white; }
+        .btn-outline { border-color: var(--color-uno); color: var(--color-uno); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-        .footer-nav { text-align: center; margin-top: 30px; }
-        .footer-nav a { color: #888; text-decoration: none; font-size: 0.8rem; }
+        .footer-info { text-align: center; font-size: 0.8rem; color: #a4b0be; margin-top: 40px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="container">
-        <h1 id="edit-titulo-tp">Imagen Digital</h1>
-        <p id="edit-subtitulo">Varita Mágica</p>
-    </div>
+    <span class="inst-name" id="edit-materia">Educación Tecnológica</span>
+    <h1 id="edit-titulo-clase">TP 2: Herramientas de Selección</h1>
+    <div class="badge" id="edit-estado">DISPONIBLE EN CLASSROOM</div>
 </header>
 
 <div class="container">
-    <div class="card">
-        <h3 id="edit-sec-1">1. Preparación de Materiales</h3>
-        <p id="edit-desc-1">Antes de empezar, asegúrate de tener el archivo base y la herramienta abierta:</p>
+    <div class="main-card">
+        <h3 id="edit-sub1">Fase 1: Recursos</h3>
+        <p id="edit-text-1">Descarga el material necesario para trabajar en el lienzo digital:</p>
         
-        <div class="action-box">
-            <a href="https://drive.google.com/file/d/1VgXUhJMZzo6Harci0Y1aUkGzGtJjSH0C/view?usp=drive_link" id="edit-link-recurso" class="btn btn-download">📥 Descargar Foca de California.jpg</a>
-            <a href="https://www.photopea.com/" target="_blank" class="btn btn-photopea">🎨 Abrir Photopea</a>
+        <div class="action-grid">
+            <a href="#" id="edit-link-archivo" class="btn btn-primary">📂 Descargar Imagen Base</a>
+            <a href="https://www.photopea.com/" target="_blank" class="btn btn-outline">🖥️ Abrir Photopea</a>
         </div>
 
-        <h3 id="edit-sec-2">2. Procedimiento de Edición</h3>
-        <ul>
-            <li id="edit-paso-1">Abrí la imagen en Photopea (</li>
-            <li id="edit-paso-2">Seleccioná la Varita Mágica en la barra izquierda.</li>
-            <li id="edit-paso-3">Configurá la Tolerancia en 30 (arriba del lienzo).</li>
-            <li id="edit-paso-4">Cliqueá en el cielo y borrá con la tecla Supr (repetí hasta limpiar todo).</li>
-            <li id="edit-paso-5">Menú Selección → Deseleccionar.</li>
-        </ul>
+        <h3 id="edit-sub2">Fase 2: Edición con Varita Mágica</h3>
+        <div class="step-list">
+            <div class="step-item">
+                <div class="step-num">1</div>
+                <div id="edit-p1">Importa la imagen y selecciona la <strong>Varita Mágica</strong> (Barra Izquierda).</div>
+            </div>
+            <div class="step-item">
+                <div class="step-num">2</div>
+                <div id="edit-p2">Ajusta la <strong>Tolerancia a 30</strong> en la barra de propiedades superior.</div>
+            </div>
+            <div class="step-item">
+                <div class="step-num">3</div>
+                <div id="edit-p3">Haz clic en el cielo y presiona <strong>Supr</strong> para eliminar los píxeles.</div>
+            </div>
+            <div class="step-item">
+                <div class="step-num">4</div>
+                <div id="edit-p4">Repite hasta que el fondo sea transparente (cuadrícula gris/blanca).</div>
+            </div>
+        </div>
 
-        <h3 id="edit-sec-3">3. Personalización de Capas</h3>
-        <p id="edit-desc-capas">Agregá 4 capas de texto con un color RGB de tu elección:</p>
-        <ul>
-            <li id="edit-capa-1">1) Nombre y Apellido (cambiá fuente y tamaño).</li>
-            <li id="edit-capa-2">2) Curso (cambiá fuente y tamaño).</li>
-            <li id="edit-capa-3">3) Año (cambiá fuente y tamaño).</li>
-            <li id="edit-capa-4">4) Código Hexadecimal del color elegido.</li>
-        </ul>
+        <h3 id="edit-sub3">Fase 3: Identificación (Capas de Texto)</h3>
+        <p id="edit-text-3">Crea 4 capas de texto con un color RGB a tu elección:</p>
+        <div class="step-list">
+            <div class="step-item"><div class="step-num">A</div><div id="edit-c1">Nombre, Apellido y Curso.</div></div>
+            <div class="step-item"><div class="step-num">B</div><div id="edit-c2">Año y Código Hexadecimal del color usado.</div></div>
+        </div>
 
-        <h3 id="edit-sec-4">4. Guardado y Entrega</h3>
-        <p id="edit-paso-final">Andá a Archivo → Guardar como PSD. Nombre del archivo: </p>
+        <h3 id="edit-sub4">Fase 4: Entrega</h3>
+        <p id="edit-text-final">Archivo > Guardar como <strong>PSD</strong>. Nombre: "TP 2". Sube el archivo a Classroom.</p>
     </div>
 
-    <div class="footer-nav">
-        <a href="index.html">← Volver al Menú Principal</a>
+    <div class="footer-info">
+        &copy; 2026 | Prof. Sebastián Colombo | Gestión de Clases Digitales
     </div>
 </div>
 
-
-
-</body></html>
+</body>
+</html>
