@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S. Colombo | Hub de Tecnología</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <style id="dinamic-styles">
+        :root {
+            --color-uno: #1e272e;
+            --color-dos: #485460;
+            --color-tres: #05c46b;
+        }
+    </style>
+
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #f1f2f6; color: #2f3542; }
+        
+        /* HEADER PRINCIPAL */
+        header { 
+            background: linear-gradient(135deg, var(--color-uno), var(--color-dos));
+            color: white; padding: 80px 20px; text-align: center;
+        }
+        header h1 { font-size: 2.8rem; margin: 0; font-weight: 800; }
+        header p { opacity: 0.8; font-weight: 300; letter-spacing: 1px; }
+
+        .container { max-width: 900px; margin: -40px auto 50px; padding: 0 20px; display: grid; grid-template-columns: 1fr 300px; gap: 25px; }
+
+        /* SECCIÓN EDITORIAL (EL BOT) */
+        .editorial-card { 
+            background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .editorial-label { color: var(--color-tres); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; }
+        .editorial-title { font-family: 'Merriweather', serif; font-size: 1.8rem; margin: 10px 0; color: var(--color-uno); }
+        .editorial-excerpt { font-family: 'Merriweather', serif; font-style: italic; color: #57606f; line-height: 1.8; }
+
+        /* LATERAL: CLIMA Y ACCESOS */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        
+        .weather-card { 
+            background: var(--color-uno); color: white; padding: 25px; border-radius: 20px; text-align: center;
+        }
+        .weather-info { font-size: 0.85rem; margin-bottom: 15px; opacity: 0.9; }
+        .btn-weather { 
+            background: var(--color-tres); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.8rem;
+        }
+
+        .nav-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .nav-card h4 { margin: 0 0 15px 0; font-size: 0.9rem; border-bottom: 2px solid #f1f2f6; padding-bottom: 5px; }
+        .nav-link { display: block; text-decoration: none; color: var(--color-uno); padding: 10px 0; font-weight: 600; font-size: 0.9rem; transition: 0.2s; border-bottom: 1px solid #f9f9f9; }
+        .nav-link:hover { color: var(--color-tres); padding-left: 5px; }
+
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; margin-top: 20px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 id="edit-nombre-sitio">S. COLOMBO</h1>
+    <p id="edit-tagline">PLATAFORMA DE EDUCACIÓN TECNOLÓGICA</p>
+</header>
+
+<div class="container">
+    <main class="editorial-card">
+        <span class="editorial-label">Editorial del Día</span>
+        <h2 class="editorial-title" id="edit-titulo-editorial">La Ética en la IA</h2>
+        <div class="editorial-excerpt" id="edit-contenido-editorial">
+            <p>"La verdadera pregunta no es si las máquinas piensan, sino si nosotros estamos pensando lo suficiente al usarlas..."</p>
+        </div>
+        <a href="#" class="nav-link" style="color: var(--color-tres); border: none;">Leer editorial completa →</a>
+    </main>
+
+    <aside class="sidebar">
+        <div class="weather-card">
+            <div id="weather-display">
+                <p class="weather-info">Para mostrarte el clima en tu zona y hablar de datos geoespaciales, necesito conocer tu ubicación.</p>
+                <button class="btn-weather" onclick="obtenerClima()">📍 ACTIVAR CLIMA</button>
+            </div>
+        </div>
+
+        <div class="nav-card">
+            <h4>ACCESOS DIRECTOS</h4>
+            <a href="tp-varita.html" id="edit-link-1" class="nav-link">📝 TP 2: Varita Mágica</a>
+            <a href="showroom.html" id="edit-link-2" class="nav-link">🏢 Showroom</a>
+            <a href="contacto.html" id="edit-link-3" class="nav-link">👤 Contacto / CV</a>
+        </div>
+    </aside>
+</div>
+
+<script>
+    async function obtenerClima() {
+        const display = document.getElementById('weather-display');
+        display.innerHTML = "⏳ Localizando...";
+
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            try {
+                // Usamos la API de Open-Meteo (Gratis y sin Key para pruebas)
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await res.json();
+                const temp = data.current_weather.temperature;
+                display.innerHTML = `
+                    <div style="font-size: 2rem; font-weight: 800;">${temp}°C</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Temperatura en tu zona</div>
+                    <div style="margin-top:10px; font-size: 0.6rem;">Datos obtenidos vía satélite</div>
+                `;
+            } catch (e) {
+                display.innerHTML = "❌ Error al cargar clima";
+            }
+        }, () => {
+            display.innerHTML = "⚠️ Ubicación denegada";
+        });
+    }
+</script>
+
+</body>
+</html>
