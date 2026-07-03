@@ -345,25 +345,21 @@ function procesarMensajeAlumno() {
     historialMensajes.appendChild(divPensando);
     historialMensajes.scrollTop = historialMensajes.scrollHeight;
 
-    // CAPTURA DE VARIABLES DEL CONTEXTO ACTUAL DEL JUEGO DEL ALUMNO
-    // (Asumimos que tenés un objeto local o variables globales con el estado financiero del alumno)
+    //  CORRECCIÓN: Mapeo exacto apuntando al objeto sessionUsuario
     const estadoFinancieroActual = {
-        liquidez: typeof liquidez !== 'undefined' ? liquidez : 0,
-        patrimonio: typeof patrimonio !== 'undefined' ? patrimonio : 0,
-        pfMonto: typeof pfMonto !== 'undefined' ? pfMonto : 0,
-        rango: typeof rango !== 'undefined' ? rango : "Iniciando"
+        liquidez: sessionUsuario.liquidez || 0,
+        patrimonio: sessionUsuario.patrimonio || 0,
+        pfMonto: sessionUsuario.pfMonto || 0,
+        rango: sessionUsuario.rango || "Iniciando"
     };
 
-    // Petición hacia tu Google Apps Script de siempre pasándole la acción del chatbot
-    // Reemplazar URL_DE_TU_WEB_APP con la dirección de tu ejecución de Apps Script
-    const urlAppsScript = "https://script.google.com/macros/s/AKfycbyS5yPr1FQRI9WOTJvEUo_LEp_C273HydytWFhAgvuugSlxdNTv7eYKuFdxDo3iGfyi/exec"; 
-
-    fetch(`${urlAppsScript}?action=chat_tutor&query=${encodeURIComponent(textoQuery)}&liquidez=${estadoFinancieroActual.liquidez}&patrimonio=${estadoFinancieroActual.patrimonio}&pfMonto=${estadoFinancieroActual.pfMonto}&rango=${encodeURIComponent(estadoFinancieroActual.rango)}`)
+    // Petición hacia tu Google Apps Script con los parámetros corregidos
+    fetch(`${SCRIPT_URL}?action=chat_tutor&query=${encodeURIComponent(textoQuery)}&liquidez=${estadoFinancieroActual.liquidez}&patrimonio=${estadoFinancieroActual.patrimonio}&pfMonto=${estadoFinancieroActual.pfMonto}&rango=${encodeURIComponent(estadoFinancieroActual.rango)}`)
         .then(res => res.json())
         .then(data => {
             const elTyping = document.getElementById('asistente-typing');
             if (elTyping) elTyping.remove();
-
+            
             if (data.status === "success") {
                 appendMensajeChat('assistant', data.respuesta);
             } else {
