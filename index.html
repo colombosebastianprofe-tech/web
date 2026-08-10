@@ -3,782 +3,537 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Financiero - Universo Persistente</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Plataforma de Simulación Financiera - Mercado & Ranking</title>
     <style>
-        .btn-accion { transition: all 0.2s ease; }
-        .btn-accion:hover { transform: translateY(-1px); }
-        .rango-ganador { animation: pulseBorder 2s infinite; }
-        @keyframes pulseBorder {
-            0% { border-color: rgba(52, 211, 153, 0.4); }
-            50% { border-color: rgba(52, 211, 153, 1); }
-            100% { border-color: rgba(52, 211, 153, 0.4); }
+        :root {
+            --primary-color: #1a73e8;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #202124;
+            --border-radius: 8px;
+            --success-color: #34a853;
+            --warning-color: #fbbc04;
         }
-        .item-vitrina { filter: grayscale(100%); opacity: 0.3; transition: all 0.5s ease; }
-        .item-vitrina.desbloqueado { filter: grayscale(0%); opacity: 1; border-color: #34d399; background: rgba(16, 185, 129, 0.1); }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #dadce0;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            font-size: 22px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #3c4043;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .objective {
+            background-color: #e8f0fe;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #1557b0;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #2d8e47;
+        }
+
+        .badge {
+            background-color: #e8f0fe;
+            color: #1967d2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #5f6368;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #dadce0;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .asset-card {
+            border: 1px solid #dadce0;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .color-box {
+            height: 60px;
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+<body>
 
-    <!-- Capa de diseño de fondo -->
-    <div class="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center gap-8 flex-wrap p-20 select-none">
-        <div class="border border-emerald-500/30 p-6 rounded-2xl w-60 text-xs font-mono">⏱️ TIME ENGINE PERSISTENT<br><span class="text-emerald-400">STATUS: 500 HOURS ACTIVE</span></div>
-        <div class="border border-sky-500/30 p-6 rounded-2xl w-60 text-xs font-mono">🏦 BANK INTERACTION<br><span class="text-sky-400">PLAZO FIJO LOCK: 90H</span></div>
-        <div class="border border-purple-500/30 p-6 rounded-2xl w-60 text-xs font-mono">🛍️ CONSUMPTION GALLERY<br><span class="text-purple-400">EXHIBITION LOCKER</span></div>
+<div class="container">
+
+    <!-- SECCIÓN DE AUTENTICACIÓN -->
+    <div id="auth-section" class="section-card">
+        <h1>SISTEMA DE INGRESO Y REGISTRO</h1>
+        <div class="objective">
+            Iniciá sesión con tus datos o registrate para comenzar en el simulador financiero.
+        </div>
+
+        <div style="display: flex; gap: 20px;">
+            <!-- Login -->
+            <div style="flex: 1;">
+                <h2>Iniciar Sesión</h2>
+                <div class="form-group">
+                    <label>Usuario:</label>
+                    <input type="text" id="login-user" placeholder="ej: j_perez">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="login-pass">
+                </div>
+                <button class="btn" onclick="iniciarSesion()">Ingresar</button>
+            </div>
+
+            <!-- Registro -->
+            <div style="flex: 1; border-left: 1px solid #dadce0; padding-left: 20px;">
+                <h2>Registro de Alumno</h2>
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <input type="text" id="reg-nombre">
+                </div>
+                <div class="form-group">
+                    <label>Apellido:</label>
+                    <input type="text" id="reg-apellido">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="reg-pass">
+                </div>
+                <button class="btn btn-success" onclick="registrarUsuario()">Registrarse</button>
+            </div>
+        </div>
     </div>
 
-    <div class="w-full max-w-2xl relative z-10 my-4">
+    <!-- PANEL PRINCIPAL DEL JUGADOR -->
+    <div id="main-section" class="hidden">
         
-        <!-- PANTALLA: AUTENTICACIÓN -->
-        <div id="contenedor-autenticacion" class="bg-slate-800/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-slate-700/60 text-center space-y-6">
-            <div id="auth-inicio" class="space-y-6">
-                <h1 class="text-3xl font-black text-emerald-400">Simulador Financiero Pro 💰</h1>
-                <p class="text-sm text-slate-400">Universo Financiero Persistente de 500 Horas. Gestioná tu liquidez y construí tu patrimonio en tiempo real.</p>
-                <div class="grid grid-cols-2 gap-4 pt-2">
-                    <button onclick="mostrarSubSeccion('auth-login')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 px-4 rounded-xl cursor-pointer transition-all btn-accion shadow-lg">Ingresar Terminal</button>
-                    <button onclick="mostrarSubSeccion('auth-registro')" class="bg-slate-700/60 hover:bg-slate-600/80 text-slate-200 font-bold py-3 px-4 rounded-xl cursor-pointer transition-all border border-slate-600 btn-accion shadow-lg">Crear Legajo</button>
+        <!-- ESTADO FINANCIERO -->
+        <div class="section-card">
+            <h1>PANEL DE CONTROL FINANCIAL</h1>
+            <div class="objective">
+                Bienvenido/a, <span id="user-display-name" style="font-weight: bold;"></span> | Rango: <span id="user-rango" class="badge">Piloto</span>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Liquidez Disponible</h3>
+                    <p id="user-liquidez">$0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Patrimonio Neto</h3>
+                    <p id="user-patrimonio">$0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Plazo Fijo Activo</h3>
+                    <p id="user-pf-monto">$0</p>
                 </div>
             </div>
 
-            <div id="auth-login" class="hidden space-y-4">
-                <h2 class="text-2xl font-bold text-emerald-400">Terminal de Acceso</h2>
-                <div class="text-left space-y-3">
-                    <div>
-                        <label class="text-xs text-slate-400 font-bold uppercase font-mono">Usuario Asignado</label>
-                        <input type="text" id="input-login-user" placeholder="Ej: s_colombo" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-emerald-500 font-mono text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-bold uppercase font-mono">Contraseña Privada</label>
-                        <input type="password" id="input-login-pass" placeholder="••••••••" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-emerald-500 font-mono text-sm">
-                    </div>
-                </div>
-                <button onclick="procesarLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all cursor-pointer">Autenticar Sistema 🚀</button>
-                <button onclick="mostrarSubSeccion('auth-inicio')" class="text-xs text-slate-500 underline block mx-auto pt-2">Volver al menú</button>
+            <!-- OPERACIÓN DE PLAZO FIJO -->
+            <h2>Constituir Plazo Fijo (Plazo: 9 Minutos)</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="pf-monto-input" placeholder="Monto a invertir EC" style="max-width: 250px;">
+                <button class="btn btn-success" onclick="constituirPlazoFijo()">Invertir a 9 Minutos</button>
             </div>
-
-            <div id="auth-registro" class="hidden space-y-4">
-                <h2 class="text-2xl font-bold text-sky-400">Nuevo Inversor</h2>
-                <div class="text-left space-y-3">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-slate-400 font-bold uppercase">Nombre</label>
-                            <input type="text" id="input-reg-nombre" placeholder="Juan" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 font-bold uppercase">Apellido</label>
-                            <input type="text" id="input-reg-apellido" placeholder="Pérez" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-bold uppercase">Contraseña Financiera</label>
-                        <input type="password" id="input-reg-pass" placeholder="Creá tu clave de operaciones" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-slate-100 focus:outline-none focus:border-sky-500 text-sm">
-                    </div>
-                </div>
-                <button onclick="procesarRegistro()" class="w-full bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold py-3 rounded-xl transition-all cursor-pointer">Generar Credenciales 💾</button>
-                <button onclick="mostrarSubSeccion('auth-inicio')" class="text-xs text-slate-500 underline block mx-auto pt-2">Volver al menú</button>
-            </div>
+            <p id="pf-status-text" style="font-size: 13px; color: #5f6368; margin-top: 8px;"></p>
         </div>
 
-        <!-- PANTALLA: INDUCCIÓN / NIVEL 0 -->
-        <div id="contenedor-nivel0" class="hidden bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <span class="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">INDUCCIÓN // NIVEL 0</span>
-                <span class="text-xs text-slate-500 font-mono" id="slide-contador">Slide 1 de 3</span>
-            </div>
-            
-            <div id="slide-1" class="slide-contenido space-y-4">
-                <h2 class="text-2xl font-black text-slate-100">Los 4 Pilares de la Riqueza</h2>
-                <p class="text-slate-300 text-sm leading-relaxed">Para dominar los mercados, primero hay que entender cómo se compone tu valor financiero. A lo largo del taller vas a ir desbloqueando las siguientes dimensiones estratégicas:</p>
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <div class="bg-slate-900/60 p-3 rounded-xl border border-emerald-500/20"><p class="font-bold text-xs text-emerald-400">💧 1. Liquidez (Disponible)</p><p class="text-[11px] text-slate-400">Efectivo inmediato. Activo en Nivel 1.</p></div>
-                    <div class="bg-slate-900/60 p-3 rounded-xl border border-sky-500/20"><p class="font-bold text-xs text-sky-400">⚖️ 2. Patrimonio Neto</p><p class="text-[11px] text-slate-400">Tu valor real consolidado en el juego.</p></div>
-                    <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-700 opacity-50"><p class="font-bold text-xs text-slate-500">🔒 3. Activos Bursátiles</p><p class="text-[11px] text-slate-600">Bienes que dan ingresos. Bloqueado.</p></div>
-                    <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-700 opacity-50"><p class="font-bold text-xs text-slate-500">🔒 4. Pasivos y Deuda</p><p class="text-[11px] text-slate-600">Obligaciones de pago. Bloqueado.</p></div>
-                </div>
+        <!-- TABLA DE POSICIONES (REEMPLAZO DE CUENTA REGRESIVA) -->
+        <div class="section-card">
+            <h1>🏆 TABLA DE POSICIONES DE JUGADORES</h1>
+            <div class="objective">
+                Clasificación global en tiempo real. Ordenada por puntuación integral (Liquidez + Patrimonio + Intereses + Oportunidades).
             </div>
 
-            <div id="slide-2" class="hidden slide-contenido space-y-4">
-                <h2 class="text-2xl font-black text-emerald-400">¿Qué es la Liquidez Disponible?</h2>
-                <p class="text-slate-300 text-sm leading-relaxed">Es el **oxígeno inmediato** de tus finanzas. Representa la cantidad de dinero (EduCoins) que tenés libre en la billetera virtual para operar **ya mismo** sin restricciones.</p>
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs font-mono text-slate-400">
-                    💡 <span class="text-slate-200 font-bold">Regla de Oro:</span> Podés congelar dinero a plazo fijo para ganar intereses, pero mientras esté allí encerrado perderás <span class="text-emerald-400">Liquidez</span> para comprar bienes o reaccionar a oportunidades.
-                </div>
-            </div>
+            <button class="btn" onclick="cargarRanking()" style="margin-bottom: 15px;">🔄 Actualizar Posiciones</button>
 
-            <div id="slide-3" class="hidden slide-contenido space-y-4">
-                <h2 class="text-2xl font-black text-sky-400">El Patrimonio Neto</h2>
-                <p class="text-slate-300 text-sm leading-relaxed">Es la verdad absoluta de tu situation económica. Al poner dinero en Plazo Fijo, tu Liquidez baja pero tu Patrimonio Neto se mantiene igual, porque el banco te debe ese capital. ¡La ganancia real aparece cuando cobrás los intereses!</p>
-                <div class="bg-slate-900 p-4 rounded-xl border border-sky-500/20 text-center font-mono text-base text-sky-300">
-                    PATRIMONIO NETO = <br><span class="text-emerald-400 text-sm">Liquidez</span> + <span class="text-amber-400 text-sm">Plazo Fijo</span> + <span class="text-slate-500 text-sm">Activos</span> - <span class="text-slate-500 text-sm">Pasivos</span>
-                </div>
-            </div>
-
-            <div class="flex justify-between pt-2 border-t border-slate-700">
-                <button id="btn-slide-atras" onclick="moverSlide(-1)" class="text-xs text-slate-400 hover:text-slate-200 font-bold disabled:opacity-30 disabled:pointer-events-none cursor-pointer">⬅️ Anterior</button>
-                <button id="btn-slide-sig" onclick="moverSlide(1)" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs py-2 px-4 rounded-lg transition-all cursor-pointer">Siguiente ➡️</button>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th># Pos</th>
+                        <th>Jugador</th>
+                        <th>Rango</th>
+                        <th>Liquidez</th>
+                        <th>Patrimonio</th>
+                        <th>Puntaje Total</th>
+                    </tr>
+                </thead>
+                <tbody id="body-ranking">
+                    <tr><td colspan="6">Cargando tabla de posiciones...</td></tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- PANTALLA: NÚCLEO DEL JUEGO (HUD CENTRAL) -->
-        <div id="contenedor-juego" class="hidden bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700 space-y-6">
-            
-            <div class="border-b border-slate-700 pb-4 space-y-3">
-                <!-- Reloj Global de 500 Horas -->
-                <div class="bg-slate-950/80 border border-red-500/30 rounded-xl p-2.5 text-center flex justify-between items-center px-4 shadow-inner">
-                    <span class="text-[10px] font-bold font-mono tracking-widest text-red-400 flex items-center gap-1.5 animate-pulse">⏳ TIEMPO RESTANTE DE JUEGO:</span>
-                    <span id="reloj-global-500h" class="text-base font-mono font-black text-slate-100 tracking-wider">500h 00m 00s</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="text-left">
-                        <h2 class="text-[10px] text-slate-400 uppercase tracking-widest font-mono">Inversor Operando:</h2>
-                        <p class="text-lg font-black text-sky-400 leading-tight" id="hud-nombre">👤 Cargando...</p>
-                        <span class="text-[10px] text-slate-500 font-mono block" id="hud-alias">USER: -</span>
-                    </div>
-                    <div class="text-right space-y-1">
-                        <div>
-                            <span class="text-[10px] text-emerald-400 uppercase tracking-wider font-mono font-bold">💧 Liquidez Disponible:</span>
-                            <p class="text-xl font-mono font-black text-emerald-400 leading-none" id="hud-liquidez">0 EC</p>
-                        </div>
-                        <div>
-                            <span class="text-[9px] text-slate-400 uppercase tracking-wider font-mono">⚖️ Patrimonio Neto:</span>
-                            <p class="text-xs font-mono font-bold text-slate-300 leading-none" id="hud-patrimonio">0 EC</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- MERCADO DIGITAL RGB -->
+        <div class="section-card">
+            <h1>MERCADO DE ACTIVOS RGB</h1>
+            <div class="objective">
+                Publicá y vendé hasta 5 activos digitales o comprá los de otros jugadores.
             </div>
 
-            <!-- Consola de Feedback Operativo -->
-            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-750 text-center">
-                <p class="text-xs text-slate-400 uppercase font-mono tracking-widest mb-1 text-emerald-500">📣 Consola Central</p>
-                <p class="text-xs text-slate-200 font-medium font-mono" id="hud-feedback">Mesa de control lista.</p>
+            <h2>Crear Activo</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="activo-colores" placeholder="Color o Hex (ej: #1a73e8 o Red)" style="flex: 2;">
+                <input type="number" id="activo-precio" placeholder="Precio EC" style="flex: 1;">
+                <button class="btn" onclick="crearActivo()">Publicar Activo</button>
             </div>
 
-            <!-- MÓDULO: PLAZO FIJO -->
-            <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/80 space-y-3">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase text-amber-400 tracking-wider">🏦 Banco Central - Inversiones a Plazo</h3>
-                    <span class="text-[10px] bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-amber-300 font-mono">TNA: 15%</span>
-                </div>
-                
-                <div id="pf-modulo-crear" class="space-y-3">
-                    <p class="text-xs text-slate-400">Congelá fondos para ganar intereses. El dinero saldrá de tu liquidez pero permanecerá seguro en tu Patrimonio Neto.</p>
-                    <div class="flex gap-2">
-                        <input type="number" id="pf-input-monto" placeholder="Monto EC a colocar" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100 font-mono focus:outline-none focus:border-amber-500">
-                        <button onclick="constituirPlazoFijo(90)" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-3 rounded-lg cursor-pointer transition-all">Colocar a 90 Horas</button>
-                        <button onclick="constituirPlazoFijo(0.0166)" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] px-2 rounded-lg cursor-pointer transition-all font-mono" title="Testeo rápido de 1 minuto">PF 1 Min</button>
-                    </div>
-                </div>
-
-                <div id="pf-modulo-bloqueado" class="hidden bg-slate-950/80 border border-amber-500/20 p-3 rounded-lg text-center space-y-2">
-                    <p class="text-xs font-bold text-amber-400">🔒 Plazo Fijo Activo en Custodia</p>
-                    <div class="text-lg font-mono font-black text-slate-200" id="pf-txt-monto">0 EC</div>
-                    <div class="text-[11px] font-mono text-slate-400" id="pf-txt-reloj">Calculando tiempo restante...</div>
-                    <button id="pf-btn-liquidar" onclick="liquidarPlazoFijo()" disabled class="w-full bg-slate-800 text-slate-500 font-bold text-xs py-2 rounded-lg cursor-not-allowed transition-all">Fondos Inmovilizados</button>
-                </div>
-            </div>
-
-            <!-- MÓDULO: VITRINA Y COMERCIO -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider">🛍️ Sector de Exhibición y Consumo (Bienes de Lujo)</h3>
-                
-                <div class="grid grid-cols-4 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-750">
-                    <div id="item-bici" class="item-vitrina border border-slate-700 rounded-lg p-2 text-center">
-                        <span class="text-xl block">🚲</span><span class="text-[9px] font-mono block text-slate-400">Bici Urbana</span>
-                    </div>
-                    <div id="item-auris" class="item-vitrina border border-slate-700 rounded-lg p-2 text-center">
-                        <span class="text-xl block">🎧</span><span class="text-[9px] font-mono block text-slate-400">Auris Pro</span>
-                    </div>
-                    <div id="item-compu" class="item-vitrina border border-slate-700 rounded-lg p-2 text-center">
-                        <span class="text-xl block">💻</span><span class="text-[9px] font-mono block text-slate-400">Notebook</span>
-                    </div>
-                    <div id="item-moto" class="item-vitrina border border-slate-700 rounded-lg p-2 text-center">
-                        <span class="text-xl block">🛵</span><span class="text-[9px] font-mono block text-slate-400">Monopatín</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 text-left">
-                    <button onclick="comprarProducto('bici', 2500, '¡Felicidades! Compraste la Bici Urbana. Se agregó a tu vitrina.')" class="bg-slate-750 border border-slate-700 p-2 rounded-xl flex justify-between items-center hover:border-purple-500 transition-all cursor-pointer text-xs btn-accion">
-                        <span>🚲 Comprar Bici</span><span class="font-mono text-purple-400 font-bold">2.500 EC</span>
-                    </button>
-                    <button onclick="comprarProducto('auris', 4000, '¡Excelente! Destrabaste los Auris Pro con cancelación de ruido.')" class="bg-slate-750 border border-slate-700 p-2 rounded-xl flex justify-between items-center hover:border-purple-500 transition-all cursor-pointer text-xs btn-accion">
-                        <span>🎧 Comprar Auris</span><span class="font-mono text-purple-400 font-bold">4.000 EC</span>
-                    </button>
-                    <button onclick="comprarProducto('compu', 12000, '¡Locura total! Compraste la Notebook de desarrollo.')" class="bg-slate-750 border border-slate-700 p-2 rounded-xl flex justify-between items-center hover:border-purple-500 transition-all cursor-pointer text-xs btn-accion">
-                        <span>💻 Comprar Notebook</span><span class="font-mono text-purple-400 font-bold">12.000 EC</span>
-                    </button>
-                    <button onclick="comprarProducto('moto', 8500, '¡Épico! Ya tenés tu Monopatín Eléctrico de alta gama.')" class="bg-slate-750 border border-slate-700 p-2 rounded-xl flex justify-between items-center hover:border-purple-500 transition-all cursor-pointer text-xs btn-accion">
-                        <span>🛵 Comprar Monopatín</span><span class="font-mono text-purple-400 font-bold">8.500 EC</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- MÓDULO: CHANGARROS DE LIQUIDEZ RÁPIDA -->
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400 font-mono">⚡ Oportunidades de Ingresos (Liquidez Rápida)</h3>
-                <p class="text-[11px] text-slate-400">Si te quedaste sin saldo, podés operar estos módulos para ganar capital básico!</p>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="abrirMinijuego('trivia')" class="bg-slate-950 hover:bg-slate-900 border border-slate-700 hover:border-sky-500/50 p-3 rounded-lg text-left transition-all cursor-pointer group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-sky-400 font-mono">🧮 Trivia Matemática</span>
-                            <span class="text-[10px] text-emerald-400 font-mono bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800/30">+500 EC c/u</span>
-                        </div>
-                        <p class="text-[10px] text-slate-500 mt-1 group-hover:text-slate-400">Desafíos rápidos de cálculo y lógica financiera.</p>
-                    </button>
-
-                    <button onclick="abrirMinijuego('conceptos')" class="bg-slate-950 hover:bg-slate-900 border border-slate-700 hover:border-purple-500/50 p-3 rounded-lg text-left transition-all cursor-pointer group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-purple-400 font-mono">🧠 Auditoría de Conceptos</span>
-                            <span class="text-[10px] text-emerald-400 font-mono bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800/30">+500 EC c/u</span>
-                        </div>
-                        <p class="text-[10px] text-slate-500 mt-1 group-hover:text-slate-400">Repaso interactivo de las definiciones del taller.</p>
-                    </button>
-                </div>
-            </div>
-
-            <!-- MARCADOR DE RANGOS INSTITUCIONALES -->
-            <div class="grid grid-cols-5 gap-1 text-[9px] font-mono text-center pt-2">
-                <div id="r-ponzi" class="bg-slate-900 border border-slate-800 p-1 rounded text-slate-600">📉 Ponzi</div>
-                <div id="r-alerta" class="bg-slate-900 border border-slate-800 p-1 rounded text-slate-600">⚠️ Alerta</div>
-                <div id="r-piloto" class="bg-slate-900 border border-slate-800 p-1 rounded text-slate-600">🚗 Piloto</div>
-                <div id="r-pro" class="bg-slate-900 border border-slate-800 p-1 rounded text-slate-600">💼 Pro</div>
-                <div id="r-leyenda" class="bg-slate-900 border border-slate-800 p-1 rounded text-slate-600">👑 Gardel</div>
+            <h2>Activos en Venta</h2>
+            <div id="market-container" class="market-grid">
+                <!-- Se puebla dinámicamente -->
             </div>
         </div>
 
     </div>
 
-    <!-- VENTANA MODAL: CONTENEDOR FLUIDO DE MINIJUEGOS -->
-    <div id="modal-minijuego" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl p-5 space-y-4 shadow-2xl relative">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h3 id="minijuego-titulo" class="text-sm font-mono font-black text-slate-200">🎮 CONFIGURANDO OPORTUNIDAD...</h3>
-                <button onclick="cerrarMinijuego()" class="text-slate-500 hover:text-slate-300 font-bold text-sm cursor-pointer">✕</button>
-            </div>
-            <div id="minijuego-pantalla" class="space-y-4">
-                <!-- Contenido inyectado dinámicamente -->
-            </div>
-        </div>
-    </div>
-<div id="contenedor-asistente-flotante" class="fixed bottom-6 right-6 z-50 font-sans">
-    <button id="btn-toggle-asistente" class="w-14 h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-300 transform hover:scale-105 active:scale-95">
-        <span id="icono-asistente" class="text-2xl">🤖</span>
-    </button>
-
-    <div id="ventana-chat-asistente" class="hidden absolute bottom-18 right-0 w-80 sm:w-96 h-[450px] bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
-        <div class="bg-slate-950 p-4 border-b border-slate-700 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                <div>
-                    <h4 class="text-sm font-bold text-slate-100">sebastIAn <span class="text-xs font-normal text-emerald-400">v2.0</span></h4>
-                    <p class="text-[10px] text-slate-400">Tutor de Laboratorio Financiero</p>
-                </div>
-            </div>
-            <button id="btn-cerrar-asistente" class="text-slate-400 hover:text-slate-200 text-xs cursor-pointer">✕</button>
-        </div>
-
-        <div id="historial-mensajes-asistente" class="flex-1 p-4 overflow-y-auto space-y-3 text-sm scrollbar-thin">
-            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-slate-300">
-                ¡Hola! Soy tu asistente de laboratorio. Si tenés dudas sobre los plazos fijos, las oportunidades de inversión o la auditoría de tu patrimonio, escribime acá. No te voy a dar la respuesta directa, ¡pero te voy a ayudar a pensar la jugada!
-            </div>
-        </div>
-
-        <div class="p-3 bg-slate-950 border-t border-slate-700 flex gap-2">
-            <input type="text" id="input-mensaje-asistente" placeholder="Escribí tu consulta acá..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
-            <button id="btn-enviar-asistente" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer">
-                Enviar
-            </button>
-        </div>
-    </div>
 </div>
-    <!-- MOTOR DE LÓGICA Y CONTROL DEL SIMULADOR -->
-    <script>
-        // =======================================================
-// INTERFACES Y CONTROL DEL ASISTENTE VIRTUAL
-// =======================================================
-const btnToggle = document.getElementById('btn-toggle-asistente');
-const btnCerrar = document.getElementById('btn-cerrar-asistente');
-const ventanaChat = document.getElementById('ventana-chat-asistente');
-const btnEnviar = document.getElementById('btn-enviar-asistente');
-const inputMensaje = document.getElementById('input-mensaje-asistente');
-const historialMensajes = document.getElementById('historial-mensajes-asistente');
 
-// Manejo de apertura y cierre de la ventana flotante
-btnToggle.addEventListener('click', () => {
-    ventanaChat.classList.toggle('hidden');
-    inputMensaje.focus();
-});
-btnCerrar.addEventListener('click', () => ventanaChat.classList.add('hidden'));
+<script>
+    // CONFIGURACIÓN DE URL DEL BACKEND Y TIEMPO FIJO DE 9 MINUTOS
+    const SCRIPT_URL = "REEMPLAZAR_CON_TU_URL_DE_WEB_APP";
+    const DURACION_PLAZO_FIJO_MS = 9 * 60 * 1000; // 9 Minutos = 540.000 ms
 
-// Captura de eventos para enviar mensajes
-btnEnviar.addEventListener('click', procesarMensajeAlumno);
-inputMensaje.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') procesarMensajeAlumno();
-});
+    let usuarioActual = null;
 
-function appendMensajeChat(rol, texto) {
-    const div = document.createElement('div');
-    if (rol === 'user') {
-        div.className = "bg-emerald-950/40 border border-emerald-800/50 p-3 rounded-xl text-slate-200 ml-8 text-right";
-    } else {
-        div.className = "bg-slate-900 border border-slate-700 p-3 rounded-xl text-slate-300 mr-8 text-left";
+    // --- FUNCIONES DE AUTENTICACIÓN Y REGISTRO ---
+    function iniciarSesion() {
+        const user = document.getElementById("login-user").value;
+        const pass = document.getElementById("login-pass").value;
+
+        fetch(`${SCRIPT_URL}?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    usuarioActual = data;
+                    mostrarPanelPrincipal();
+                } else {
+                    alert(data.message);
+                }
+            });
     }
-    div.innerText = texto;
-    historialMensajes.appendChild(div);
-    historialMensajes.scrollTop = historialMensajes.scrollHeight;
-}
 
-function procesarMensajeAlumno() {
-    const textoQuery = inputMensaje.value.trim();
-    if (!textoQuery) return;
+    function registrarUsuario() {
+        const nombre = document.getElementById("reg-nombre").value;
+        const apellido = document.getElementById("reg-apellido").value;
+        const pass = document.getElementById("reg-pass").value;
 
-    // Dibujamos la consulta del alumno en pantalla instantáneamente
-    appendMensajeChat('user', textoQuery);
-    inputMensaje.value = '';
+        fetch(`${SCRIPT_URL}?action=register&nombre=${encodeURIComponent(nombre)}&apellido=${encodeURIComponent(apellido)}&password=${encodeURIComponent(pass)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert(data.message);
+                    usuarioActual = data;
+                    mostrarPanelPrincipal();
+                } else {
+                    alert(data.message);
+                }
+            });
+    }
 
-    // Colocamos un indicador visual de carga ("Pensando...")
-    const divPensando = document.createElement('div');
-    divPensando.id = "asistente-typing";
-    divPensando.className = "text-xs text-slate-500 italic animate-pulse";
-    divPensando.innerText = "sebastIAn está analizando tu caso...";
-    historialMensajes.appendChild(divPensando);
-    historialMensajes.scrollTop = historialMensajes.scrollHeight;
+    function mostrarPanelPrincipal() {
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("main-section").classList.remove("hidden");
+        
+        document.getElementById("user-display-name").innerText = `${usuarioActual.nombre} ${usuarioActual.apellido}`;
+        document.getElementById("user-rango").innerText = usuarioActual.rango;
+        
+        actualizarInterfazFinanciera();
+        cargarRanking();
+        cargarMercado();
+        verificarPlazoFijoVencido();
+    }
 
-    //  CORRECCIÓN: Mapeo exacto apuntando al objeto sessionUsuario
-    const estadoFinancieroActual = {
-        liquidez: sessionUsuario.liquidez || 0,
-        patrimonio: sessionUsuario.patrimonio || 0,
-        pfMonto: sessionUsuario.pfMonto || 0,
-        rango: sessionUsuario.rango || "Iniciando"
-    };
+    function actualizarInterfazFinanciera() {
+        document.getElementById("user-liquidez").innerText = `$${Number(usuarioActual.liquidez).toLocaleString()}`;
+        document.getElementById("user-patrimonio").innerText = `$${Number(usuarioActual.patrimonio).toLocaleString()}`;
+        document.getElementById("user-pf-monto").innerText = `$${Number(usuarioActual.pfMonto).toLocaleString()}`;
+        
+        if (usuarioActual.pfVence && new Date().getTime() < Number(usuarioActual.pfVence)) {
+            const restanteMin = Math.ceil((Number(usuarioActual.pfVence) - new Date().getTime()) / 60000);
+            document.getElementById("pf-status-text").innerText = `Tenés un plazo fijo activo que vence en aproximadamente ${restanteMin} minuto(s).`;
+        } else {
+            document.getElementById("pf-status-text").innerText = "No tenés inversiones de plazo fijo vigentes.";
+        }
+    }
 
-    // Petición hacia tu Google Apps Script con los parámetros corregidos
-    fetch(`${SCRIPT_URL}?action=chat_tutor&query=${encodeURIComponent(textoQuery)}&liquidez=${estadoFinancieroActual.liquidez}&patrimonio=${estadoFinancieroActual.patrimonio}&pfMonto=${estadoFinancieroActual.pfMonto}&rango=${encodeURIComponent(estadoFinancieroActual.rango)}`)
-        .then(res => res.json())
-        .then(data => {
-            const elTyping = document.getElementById('asistente-typing');
-            if (elTyping) elTyping.remove();
-            
-            if (data.status === "success") {
-                appendMensajeChat('assistant', data.respuesta);
-            } else {
-                appendMensajeChat('assistant', "Hubo un problema de conexión con la base de datos de simulación.");
-            }
-        })
-        .catch(() => {
-            const elTyping = document.getElementById('asistente-typing');
-            if (elTyping) elTyping.remove();
-            appendMensajeChat('assistant', "Error en los servidores del laboratorio escolar.");
+    // --- LÓGICA DEL PLAZO FIJO (9 MINUTOS) ---
+    function constituirPlazoFijo() {
+        const monto = Number(document.getElementById("pf-monto-input").value);
+        if (isNaN(monto) || monto <= 0) return alert("Ingresá un monto válido.");
+        if (monto > usuarioActual.liquidez) return alert("No tenés suficiente liquidez.");
+        if (usuarioActual.pfMonto > 0) return alert("Ya tenés un plazo fijo vigente.");
+
+        const fechaVencimiento = new Date().getTime() + DURACION_PLAZO_FIJO_MS;
+        
+        usuarioActual.liquidez -= monto;
+        usuarioActual.pfMonto = monto;
+        usuarioActual.pfVence = fechaVencimiento;
+
+        sincronizarServidor().then(() => {
+            alert("Plazo fijo constituido con éxito a 9 minutos.");
+            actualizarInterfazFinanciera();
+            cargarRanking();
         });
-}
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyS5yPr1FQRI9WOTJvEUo_LEp_C273HydytWFhAgvuugSlxdNTv7eYKuFdxDo3iGfyi/exec";
+    }
 
-        // Objeto único persistente para la sesión del alumno
-        let sessionUsuario = {
-            nombre: "", apellido: "", username: "",
-            liquidez: 10000, patrimonio: 10000, rango: "Piloto de Tormentas",
-            pfMonto: 0, pfVence: "", inventario: ""
-        };
+    function verificarPlazoFijoVencido() {
+        if (usuarioActual.pfMonto > 0 && usuarioActual.pfVence) {
+            if (new Date().getTime() >= Number(usuarioActual.pfVence)) {
+                const interesGanado = Math.round(usuarioActual.pfMonto * 0.10); // 10% Tasa
+                usuarioActual.liquidez += (usuarioActual.pfMonto + interesGanado);
+                usuarioActual.patrimonio += interesGanado;
+                usuarioActual.pfMonto = 0;
+                usuarioActual.pfVence = "";
 
-        let currentSlide = 1;
-        const totalSlides = 3;
-        let bucleReloj = null;
-
-        // MOTOR DE CHANGARROS (MINIJUEGOS)
-        let juegoActual = "";
-        let preguntaActualIndice = 0;
-        let preguntasFiltradas = [];
-        let gananciasRonda = 0;
-
-        const BANCO_TRIVIA = [
-            { q: "Si ponés 1.000 EC en Plazo Fijo al 10% de interés simple, ¿cuánta plata tenés en total al vencer?", a: ["1.100 EC", "1.010 EC", "1.000 EC", "2.000 EC"], c: 0 },
-            { q: "La inflación del mercado provoca que tu dinero en mano...", a: ["Gane poder de compra", "Pierda poder de compra", "Se duplique", "Mantenga su valor intacto"], c: 1 },
-            { q: "Si una notebook cuesta 5.000 EC y la inflación proyectada es del 20%, ¿cuál será su precio estimado?", a: ["5.200 EC", "5.500 EC", "6.000 EC", "4.000 EC"], c: 2 },
-            { q: "Si disponés de 3.000 EC en efectivo y activos por 7.000 EC, ¿cuál es tu Patrimonio Neto?", a: ["4.000 EC", "3.000 EC", "7.000 EC", "10.000 EC"], c: 3 }
-        ];
-
-        const BANCO_CONCEPTOS = [
-            { q: "¿Qué define exactamente a la 'Liquidez Disponible'?", a: ["La plata invertida atrapada en plazos fijos", "El dinero en efectivo listo para gastar u operar ya mismo", "El valor total de tus propiedades y computadoras", "Las deudas acumuladas"], c: 1 },
-            { q: "¿Qué es el Patrimonio Neto dentro de tu simulación?", a: ["La liquidez total sumada al valor de tus inversiones físicas", "Únicamente las monedas que tenés en la billetera", "La cantidad de ítems comprados en la tienda", "El interés que te paga el banco por esperar"], c: 0 },
-            { q: "¿Qué significa que una inversión esté bajo un 'Plazo Fijo' de tiempo?", a: ["Que podés retirar el capital en cualquier segundo del día", "Que el dinero queda bloqueado generando intereses hasta su vencimiento", "Que es una inversión de alto riesgo donde podés perder todo", "Que sirve para comprar comida"], c: 1 },
-            { q: "Si comprás una Bicicleta en la tienda, ¿qué impacto tiene en tus variables?", a: ["Baja tu Liquidez pero tu Patrimonio Neto se mantiene estable", "Sube tu Liquidez y baja tu Patrimonio Neto", "Perdés dinero de forma definitiva sin contraprestación", "Te da intereses diarios automáticamente"], c: 0 }
-        ];
-
-        function mostrarSubSeccion(idSub) {
-            document.getElementById('auth-inicio').classList.add('hidden');
-            document.getElementById('auth-login').classList.add('hidden');
-            document.getElementById('auth-registro').classList.add('hidden');
-            document.getElementById(idSub).classList.remove('hidden');
-        }
-
-        function cambiarFaseGlobal(idContenedor) {
-            document.getElementById('contenedor-autenticacion').classList.add('hidden');
-            document.getElementById('contenedor-nivel0').classList.add('hidden');
-            document.getElementById('contenedor-juego').classList.add('hidden');
-            document.getElementById(idContenedor).classList.remove('hidden');
-        }
-
-        function moverSlide(direccion) {
-            document.getElementById(`slide-${currentSlide}`).classList.add('hidden');
-            currentSlide += direccion;
-            if (currentSlide > totalSlides) {
-                cambiarFaseGlobal('contenedor-juego');
-                return;
-            }
-            document.getElementById(`slide-${currentSlide}`).classList.remove('hidden');
-            document.getElementById('slide-contador').innerText = `Slide ${currentSlide} de ${totalSlides}`;
-            document.getElementById('btn-slide-atras').disabled = (currentSlide === 1);
-            document.getElementById('btn-slide-sig').innerText = (currentSlide === totalSlides) ? "Comenzar Nivel 1 🚀" : "Siguiente ➡️";
-        }
-
-        // CONTROL DE AUTENTICACIÓN
-        function procesarLogin() {
-            const user = document.getElementById('input-login-user').value.trim();
-            const pass = document.getElementById('input-login-pass').value.trim();
-            if(!user || !pass) return alert("Por favor completa los campos.");
-
-            fetch(`${SCRIPT_URL}?action=login&username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        cargarDatosEnMemoria(data);
-                        cambiarFaseGlobal('contenedor-juego');
-                    } else {
-                        alert("Error: " + data.message);
-                    }
-                }).catch(err => alert("Error de red de terminal."));
-        }
-
-        function procesarRegistro() {
-            const nom = document.getElementById('input-reg-nombre').value.trim();
-            const ape = document.getElementById('input-reg-apellido').value.trim();
-            const pass = document.getElementById('input-reg-pass').value.trim();
-            if(!nom || !ape || !pass) return alert("Campos incompletos.");
-
-            fetch(`${SCRIPT_URL}?action=register&nombre=${encodeURIComponent(nom)}&apellido=${encodeURIComponent(ape)}&password=${encodeURIComponent(pass)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        alert(`¡Legajo Creado!\n\n⚠️ TU USUARIO ASIGNADO ES: ${data.username}`);
-                        cargarDatosEnMemoria(data);
-                        currentSlide = 1;
-                        cambiarFaseGlobal('contenedor-nivel0');
-                    } else {
-                        alert("Error: " + data.message);
-                    }
-                }).catch(err => alert("Falla de registro remoto."));
-        }
-
-        function cargarDatosEnMemoria(datos) {
-            sessionUsuario.nombre = datos.nombre;
-            sessionUsuario.apellido = datos.apellido;
-            sessionUsuario.username = datos.username;
-            sessionUsuario.liquidez = Number(datos.liquidez);
-            sessionUsuario.patrimonio = Number(datos.patrimonio);
-            sessionUsuario.rango = datos.rango;
-            sessionUsuario.pfMonto = Number(datos.pfMonto);
-            sessionUsuario.pfVence = datos.pfVence;
-            sessionUsuario.inventario = datos.inventario || "";
-
-            document.getElementById('hud-nombre').innerText = `👤 ${sessionUsuario.nombre} ${sessionUsuario.apellido}`;
-            document.getElementById('hud-alias').innerText = `USER: ${sessionUsuario.username}`;
-            
-            actualizarVitrinaVisual();
-            renderizarHUD();
-            inicializarRelojPlazoFijo();
-        }
-
-        // SISTEMA DE CONTROL DE PLAZO FIJO
-        function constituirPlazoFijo(horas) {
-            const monto = Math.floor(Number(document.getElementById('pf-input-monto').value));
-            if (isNaN(monto) || monto <= 0) return alert("Ingresá un monto de EduCoins válido.");
-            if (monto > sessionUsuario.liquidez) return alert("No tenés suficiente Liquidez Disponible para este bloqueo.");
-
-            sessionUsuario.liquidez -= monto;
-            sessionUsuario.pfMonto = monto;
-            
-            const ahora = new Date();
-            const tiempoFuturo = ahora.getTime() + (horas * 60 * 60 * 1000);
-            sessionUsuario.pfVence = new Date(tiempoFuturo).toISOString();
-
-            document.getElementById('pf-input-monto').value = "";
-            document.getElementById('hud-feedback').innerText = `🏦 Plazo Fijo constituido por ${horas === 90 ? '90 horas' : '1 minuto'}. Capital inmovilizado.`;
-            
-            renderizarHUD();
-            guardarDatosEnNube();
-            inicializarRelojPlazoFijo();
-        }
-
-        function inicializarRelojPlazoFijo() {
-            if(bucleReloj) clearInterval(bucleReloj);
-
-            if (!sessionUsuario.pfVence || sessionUsuario.pfMonto <= 0) {
-                document.getElementById('pf-modulo-crear').classList.remove('hidden');
-                document.getElementById('pf-modulo-bloqueado').classList.add('hidden');
-                return;
-            }
-
-            document.getElementById('pf-modulo-crear').classList.add('hidden');
-            document.getElementById('pf-modulo-bloqueado').classList.remove('hidden');
-            document.getElementById('pf-txt-monto').innerText = `${sessionUsuario.pfMonto.toLocaleString()} EC`;
-
-            bucleReloj = setInterval(function() {
-                const ahora = new Date().getTime();
-                const vencimiento = new Date(sessionUsuario.pfVence).getTime();
-                const restante = vencimiento - ahora;
-
-                if (restante <= 0) {
-                    clearInterval(bucleReloj);
-                    document.getElementById('pf-txt-reloj').innerHTML = "<span class='text-emerald-400 font-bold'>¡Fondos Disponibles para Liquidación!</span>";
-                    const btn = document.getElementById('pf-btn-liquidar');
-                    btn.disabled = false;
-                    btn.innerText = "Cobrar Capital + Intereses 💰";
-                    btn.className = "w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs py-2 rounded-lg cursor-pointer transition-all shadow-md";
-                } else {
-                    const horas = Math.floor(restante / (1000 * 60 * 60));
-                    const minutos = Math.floor((restante % (1000 * 60 * 60)) / (1000 * 60));
-                    const segundos = Math.floor((restante % (1000 * 60)) / 1000);
-                    document.getElementById('pf-txt-reloj').innerText = `Bloqueado por: ${horas}h ${minutos}m ${segundos}s`;
-                    
-                    const btn = document.getElementById('pf-btn-liquidar');
-                    btn.disabled = true;
-                    btn.innerText = "Fondos Inmovilizados";
-                    btn.className = "w-full bg-slate-800 text-slate-500 font-bold text-xs py-2 rounded-lg cursor-not-allowed transition-all";
-                }
-            }, 1000);
-        }
-
-        function liquidarPlazoFijo() {
-            const premioInteres = Math.floor(sessionUsuario.pfMonto * 0.15);
-            const totalDevolucion = sessionUsuario.pfMonto + premioInteres;
-
-            sessionUsuario.liquidez += totalDevolucion;
-            sessionUsuario.patrimonio += premioInteres;
-            
-            sessionUsuario.pfMonto = 0;
-            sessionUsuario.pfVence = "";
-
-            document.getElementById('hud-feedback').innerText = `🏦 ¡Operación finalizada con éxito! Recuperaste el capital y cobraste +${premioInteres} EC de intereses puros.`;
-            
-            evaluarNuevoRango();
-            renderizarHUD();
-            guardarDatosEnNube();
-            inicializarRelojPlazoFijo();
-        }
-
-        // ADQUISICIÓN DE PRODUCTOS (CONSUMO DE TIENDA)
-        function comprarProducto(codigo, precio, mensaje) {
-            let lista = sessionUsuario.inventario ? sessionUsuario.inventario.split(",") : [];
-            if (lista.includes(codigo)) return alert("Ya adquiriste este bien, está exhibido en tu vitrina.");
-
-            if (sessionUsuario.liquidez < precio) return alert("No tenés suficiente Liquidez Disponible. ¡Tu capital puede estar inmovilizado en el banco!");
-
-            sessionUsuario.liquidez -= precio;
-            sessionUsuario.patrimonio -= precio;
-            
-            lista.push(codigo);
-            sessionUsuario.inventario = lista.join(",");
-
-            document.getElementById('hud-feedback').innerText = mensaje;
-            
-            actualizarVitrinaVisual();
-            evaluarNuevoRango();
-            renderizarHUD();
-            guardarDatosEnNube();
-        }
-
-        function actualizarVitrinaVisual() {
-            const items = ['bici', 'auris', 'compu', 'moto'];
-            let lista = sessionUsuario.inventario ? sessionUsuario.inventario.split(",") : [];
-            
-            items.forEach(it => {
-                const el = document.getElementById(`item-${it}`);
-                if(lista.includes(it)) {
-                    el.classList.add('desbloqueado');
-                } else {
-                    el.classList.remove('desbloqueado');
-                }
-            });
-        }
-
-        // DINÁMICA DE GANANCIAS DE LOS MINIJUEGOS (CHANGARROS)
-        function abrirMinijuego(tipo) {
-            juegoActual = tipo;
-            preguntaActualIndice = 0;
-            gananciasRonda = 0;
-            
-            const banco = tipo === 'trivia' ? BANCO_TRIVIA : BANCO_CONCEPTOS;
-            preguntasFiltradas = [...banco].sort(() => 0.5 - Math.random()).slice(0, 3);
-            
-            document.getElementById('minijuego-titulo').innerText = tipo === 'trivia' ? "🧮 DESAFÍO: TRIVIA MATEMÁTICA" : "🧠 DESAFÍO: AUDITORÍA DE CONCEPTOS";
-            document.getElementById('modal-minijuego').classList.remove('hidden');
-            
-            presentarPregunta();
-        }
-
-        function presentarPregunta() {
-            const pantalla = document.getElementById('minijuego-pantalla');
-            if (preguntaActualIndice >= preguntasFiltradas.length) {
-                let bonus = 0;
-                if (gananciasRonda === preguntasFiltradas.length * 500) {
-                    bonus = 1500; 
-                }
-                const totalGanado = gananciasRonda + bonus;
-                
-                sessionUsuario.liquidez += totalGanado;
-                sessionUsuario.patrimonio += totalGanado;
-                
-                document.getElementById('hud-feedback').innerText = `⚡ Completaste una actividad extra. Saldo actualizado.`;
-                
-                evaluarNuevoRango();
-                renderizarHUD();
-                guardarDatosEnNube();
-
-                pantalla.innerHTML = `
-                    <div class="text-center space-y-3 py-2">
-                        <p class="text-xs text-slate-400">¡Ronda de trabajo finalizada con éxito!</p>
-                        <p class="text-2xl font-black text-emerald-400 font-mono">+${totalGanado} EC</p>
-                        ${bonus > 0 ? '<p class="text-[10px] text-amber-400 font-mono font-bold">⭐ ¡BONUS DE RANGO PERFECTO INCLUIDO (+1500 EC)!</p>' : ''}
-                        <p class="text-[11px] text-slate-500 font-mono">Las variables fueron impactadas y sincronizadas en la base central.</p>
-                        <button onclick="cerrarMinijuego()" class="w-full bg-slate-800 hover:bg-slate-700 font-bold text-xs py-2.5 rounded-lg cursor-pointer mt-2">Volver al Mercado de Inversión</button>
-                    </div>
-                `;
-                return;
-            }
-
-            const p = preguntasFiltradas[preguntaActualIndice];
-            let opcionesHTML = "";
-            p.a.forEach((opt, idx) => {
-                opcionesHTML += `
-                    <button onclick="evaluarRespuesta(${idx})" class="w-full text-left bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 rounded-lg p-2.5 text-xs font-mono cursor-pointer transition-all">
-                        ${idx + 1}. ${opt}
-                    </button>
-                `;
-            });
-
-            pantalla.innerHTML = `
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-[10px] font-mono text-slate-500">
-                        <span>PREGUNTA: ${preguntaActualIndice + 1}/${preguntasFiltradas.length}</span>
-                        <span class="text-emerald-500">ACUMULADO: ${gananciasRonda} EC</span>
-                    </div>
-                    <p class="text-xs font-bold text-slate-300 font-sans leading-relaxed">${p.q}</p>
-                    <div class="space-y-2 pt-1">
-                        ${opcionesHTML}
-                    </div>
-                </div>
-            `;
-        }
-
-        function evaluarRespuesta(indiceSeleccionado) {
-            const p = preguntasFiltradas[preguntaActualIndice];
-            if (indiceSeleccionado === p.c) {
-                gananciasRonda += 500;
-                alert("¡Correcto! +500 EC acumulados.");
-            } else {
-                alert(`Incorrecto. La respuesta correcta era: ${p.a[p.c]}`);
-            }
-            preguntaActualIndice++;
-            presentarPregunta();
-        }
-
-        function cerrarMinijuego() {
-            document.getElementById('modal-minijuego').classList.add('hidden');
-        }
-
-        // EVALUACIÓN DE SISTEMA DE RANGOS
-        function evaluarNuevoRango() {
-            let pat = sessionUsuario.patrimonio;
-            if (pat >= 30000) sessionUsuario.rango = "Rango Gardel";
-            else if (pat >= 20000) sessionUsuario.rango = "Inversor Pro";
-            else if (pat >= 10000) sessionUsuario.rango = "Piloto de Tormentas";
-            else if (pat >= 4500) sessionUsuario.rango = "Alerta de Liquidez";
-            else sessionUsuario.rango = "Víctima de Ponzi";
-        }
-
-        function renderizarHUD() {
-            document.getElementById('hud-liquidez').innerText = `${sessionUsuario.liquidez.toLocaleString()} EC`;
-            document.getElementById('hud-patrimonio').innerText = `${sessionUsuario.patrimonio.toLocaleString()} EC`;
-
-            const idRangos = {
-                "Rango Gardel": "r-leyenda", "Inversor Pro": "r-pro",
-                "Piloto de Tormentas": "r-piloto", "Alerta de Liquidez": "r-alerta",
-                "Víctima de Ponzi": "r-ponzi"
-            };
-
-            Object.values(idRangos).forEach(id => {
-                document.getElementById(id).className = "bg-slate-900 border border-slate-800 p-1 rounded text-slate-600";
-            });
-
-            const idActivo = idRangos[sessionUsuario.rango];
-            if (idActivo) {
-                document.getElementById(idActivo).className = "bg-emerald-500 text-slate-950 border border-emerald-400 p-1 rounded font-bold scale-105 shadow-md";
-            }
-        }
-
-        // MOTOR CENTRALIZADO DE AUTOGUARDADO AUTOMÁTICO EN SEGUNDO PLANO
-        function guardarDatosEnNube() {
-            if (!sessionUsuario || !sessionUsuario.username) return;
-
-            const datosAEnviar = {
-                username: sessionUsuario.username,
-                liquidez: sessionUsuario.liquidez,
-                patrimonio: sessionUsuario.patrimonio,
-                rango: sessionUsuario.rango,
-                pfMonto: sessionUsuario.pfMonto,
-                pfVence: sessionUsuario.pfVence,
-                inventario: sessionUsuario.inventario
-            };
-
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosAEnviar)
-            })
-            .then(() => {
-                console.log("🔄 Autoguardado exitoso en la nube central.");
-            })
-            .catch(err => {
-                console.error("❌ Fallo crítico en el envío de persistencia:", err);
-            });
-        }
-
-        // RELOJ GLOBAL SINCRO CON FECHA FIJA EN BACKEND (18/06/2026 12:30 HS)
-        function inicializarRelojGlobal() {
-            fetch(`${SCRIPT_URL}?action=get_time`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "success" && data.fechaInicio) {
-                        const fechaInicioJuego = new Date(data.fechaInicio).getTime();
-                        const duracionMilisegundos = 500 * 60 * 60 * 1000;
-                        const fechaFinJuego = fechaInicioJuego + duracionMilisegundos;
-
-                        setInterval(function() {
-                            const ahora = new Date().getTime();
-                            const restante = fechaFinJuego - ahora;
-                            const contenedorReloj = document.getElementById('reloj-global-500h');
-
-                            if (restante <= 0) {
-                                contenedorReloj.innerText = "¡MERCADO CLAUSURADO (00h 00m 00s)!";
-                                contenedorReloj.className = "text-sm font-mono font-black text-red-500 animate-pulse";
-                                document.querySelectorAll('.btn-accion').forEach(b => b.disabled = true);
-                            } else {
-                                const horas = Math.floor(restante / (1000 * 60 * 60));
-                                const minutos = Math.floor((restante % (1000 * 60 * 60)) / (1000 * 60));
-                                const segundos = Math.floor((restante % (1000 * 60)) / 1000);
-
-                                contenedorReloj.innerText = `${String(horas).padStart(2, '0')}h ${String(minutos).padStart(2, '0')}m ${String(segundos).padStart(2, '0')}s`;
-                            }
-                        }, 1000);
-                    }
-                }).catch(() => {
-                    document.getElementById('reloj-global-500h').innerText = "ERROR DE SINCRONIZACIÓN";
+                sincronizarServidor().then(() => {
+                    alert(`¡Tu plazo fijo de 9 minutos ha vencido! Cobraste el capital más $${interesGanado} EC de intereses.`);
+                    actualizarInterfazFinanciera();
+                    cargarRanking();
                 });
+            }
         }
+    }
 
-        window.addEventListener('DOMContentLoaded', inicializarRelojGlobal);
-    </script>
+    function sincronizarServidor() {
+        return fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: "update_user",
+                username: usuarioActual.username,
+                liquidez: usuarioActual.liquidez,
+                patrimonio: usuarioActual.patrimonio,
+                rango: usuarioActual.rango,
+                pfMonto: usuarioActual.pfMonto,
+                pfVence: usuarioActual.pfVence,
+                inventario: usuarioActual.inventario
+            })
+        }).then(res => res.json());
+    }
+
+    // --- TABLA DE POSICIONES (RANKING) ---
+    function cargarRanking() {
+        fetch(`${SCRIPT_URL}?action=obtener_ranking`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const tbody = document.getElementById("body-ranking");
+                    tbody.innerHTML = "";
+
+                    data.ranking.forEach((jugador, index) => {
+                        const esActual = usuarioActual && jugador.username === usuarioActual.username;
+                        const fila = `
+                            <tr style="${esActual ? 'background-color: #e8f0fe; font-weight: bold;' : ''}">
+                                <td><strong>#${index + 1}</strong></td>
+                                <td>${jugador.nombre} <small>(${jugador.username})</small></td>
+                                <td><span class="badge">${jugador.rango}</span></td>
+                                <td>$${Number(jugador.liquidez).toLocaleString()}</td>
+                                <td>$${Number(jugador.patrimonio).toLocaleString()}</td>
+                                <td style="color: var(--primary-color); font-weight: bold;">$${Number(jugador.puntajeTotal).toLocaleString()}</td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += fila;
+                    });
+                }
+            });
+    }
+
+    // --- MERCADO RGB ---
+    function cargarMercado() {
+        fetch(`${SCRIPT_URL}?action=obtener_mercado`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    const container = document.getElementById("market-container");
+                    container.innerHTML = "";
+
+                    data.activos.forEach(activo => {
+                        if (activo.enVenta === "SI") {
+                            const card = `
+                                <div class="asset-card">
+                                    <div class="color-box" style="background-color: ${activo.colores}; border: 1px solid #ccc;"></div>
+                                    <p><strong>Vendedor:</strong> ${activo.dueno}</p>
+                                    <p><strong>Precio:</strong> $${activo.precio} EC</p>
+                                    ${usuarioActual && activo.dueno !== usuarioActual.username ? 
+                                        `<button class="btn btn-success" onclick="comprarActivo('${activo.id}')">Comprar</button>` : 
+                                        `<span class="badge" style="background-color: #f1f3f4; color: #5f6368;">Tu publicación</span>`}
+                                </div>
+                            `;
+                            container.innerHTML += card;
+                        }
+                    });
+                }
+            });
+    }
+
+    function crearActivo() {
+        const colores = document.getElementById("activo-colores").value;
+        const precio = document.getElementById("activo-precio").value;
+
+        fetch(`${SCRIPT_URL}?action=crear_activo&username=${encodeURIComponent(usuarioActual.username)}&colores=${encodeURIComponent(colores)}&precio=${precio}`)
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    cargarMercado();
+                }
+            });
+    }
+
+    function comprarActivo(idActivo) {
+        fetch(`${SCRIPT_URL}?action=comprar_activo&comprador=${encodeURIComponent(usuarioActual.username)}&id_activo=${encodeURIComponent(idActivo)}`)
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === "success") {
+                    // Refrescar datos
+                    iniciarSesionActualizada();
+                }
+            });
+    }
+
+    function iniciarSesionActualizada() {
+        fetch(`${SCRIPT_URL}?action=login&username=${encodeURIComponent(usuarioActual.username)}&password=${encodeURIComponent(usuarioActual.password || '')}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    usuarioActual = data;
+                    actualizarInterfazFinanciera();
+                    cargarMercado();
+                    cargarRanking();
+                }
+            });
+    }
+</script>
+
 </body>
 </html>
